@@ -65,12 +65,12 @@ export function Header() {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 shrink-0">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-all"
+                className="px-2.5 xl:px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground rounded-lg hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-all whitespace-nowrap shrink-0"
               >
                 {link.label}
               </a>
@@ -78,26 +78,26 @@ export function Header() {
           </nav>
 
           {/* Right Controls: Auth, Lang, Theme */}
-          <div className="hidden md:flex items-center gap-2.5">
+          <div className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0">
             {/* CTA Button matching screenshot */}
             <Link
               href="/#calculator"
-              className="px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all"
+              className="px-3.5 xl:px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap shrink-0"
             >
-              {t("hero.ctaConsult")}
+              {t("nav.navConsult")}
             </Link>
 
             {/* Dashboard Link */}
             <Link
               href="/dashboard"
-              className="px-3 py-1.5 rounded-lg bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-foreground font-semibold text-xs flex items-center gap-1.5 transition-all"
+              className="px-2.5 xl:px-3 py-1.5 rounded-lg bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-foreground font-semibold text-xs flex items-center gap-1.5 transition-all whitespace-nowrap shrink-0"
             >
-              <LayoutDashboard className="h-3.5 w-3.5 text-primary" />
+              <LayoutDashboard className="h-3.5 w-3.5 text-primary shrink-0" />
               <span>{t("nav.dashboard")}</span>
             </Link>
 
             {/* Segmented 3-Language Switcher (UZ | RU | EN) matching screenshot */}
-            <div className="ios-segmented">
+            <div className="ios-segmented shrink-0">
               {(["uz", "ru", "en"] as Language[]).map((lang) => (
                 <button
                   key={lang}
@@ -117,7 +117,7 @@ export function Header() {
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"
-              className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] flex items-center justify-center text-foreground hover:bg-black/[0.05] dark:hover:bg-white/[0.1] transition-all"
+              className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] flex items-center justify-center text-foreground hover:bg-black/[0.05] dark:hover:bg-white/[0.1] transition-all shrink-0"
             >
               {isDark ? (
                 <Sun className="h-4 w-4 text-amber-400" />

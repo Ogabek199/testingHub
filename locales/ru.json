@@ -1,13 +1,14 @@
 {
   "nav": {
     "home": "Главная",
-    "bugCost": "Стоимость бага",
+    "bugCost": "Стоимость багов",
     "calculator": "Калькулятор",
-    "qaInfo": "Что такое QA?",
+    "qaInfo": "Что такое QA",
     "services": "Услуги",
     "process": "Процесс",
     "cases": "Кейсы",
     "dashboard": "Дашборд",
+    "navConsult": "Консультация",
     "login": "Войти",
     "register": "Начать",
     "logout": "Выйти"
