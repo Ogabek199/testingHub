@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-geist-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas, monospace;
+}
+
+@layer base {
+  :root {
+    /* Warm cream light theme (matching uploaded screenshot 1) */
+    --background: 38 30% 97%; /* #FAF8F5 */
+    --foreground: 220 20% 12%; /* #181A1E */
+    --card: 0 0% 100%;
+    --card-foreground: 220 20% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 12%;
+    --primary: 4 68% 54%; /* Terracotta Coral #D9463D */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 38 20% 93%;
+    --secondary-foreground: 220 20% 15%;
+    --muted: 38 18% 92%;
+    --muted-foreground: 220 10% 46%;
+    --accent: 4 68% 54%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 38 15% 89%;
+    --input: 38 15% 89%;
+    --ring: 4 68% 54%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    /* Sleek Onyx / Charcoal Dark Theme (matching uploaded screenshot 2) */
+    --background: 240 10% 6%; /* #0E0E11 */
+    --foreground: 0 0% 98%;
+    --card: 240 8% 10%; /* #18181C */
+    --card-foreground: 0 0% 98%;
+    --popover: 240 8% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 4 75% 58%; /* Glowing Coral #E55347 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 6% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 6% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 4 75% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 18%;
+    --input: 240 6% 18%;
+    --ring: 4 75% 58%;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-coral-500/20 selection:text-coral-900 dark:selection:text-coral-200;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+  /* iOS-style Glass Surfaces */
+  .ios-glass {
+    @apply bg-white/75 dark:bg-[#151518]/75 backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.08];
+  }
+
+  .ios-card {
+    @apply bg-white dark:bg-[#18181C] rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-ios dark:shadow-none transition-all duration-200;
+  }
+
+  .ios-card-interactive {
+    @apply ios-card hover:shadow-ios-lg hover:-translate-y-0.5 active:scale-[0.99] cursor-pointer;
+  }
+
+  /* Segmented iOS tab switcher */
+  .ios-segmented {
+    @apply inline-flex p-1 bg-black/[0.05] dark:bg-white/[0.08] rounded-xl;
+  }
+
+  .ios-segmented-btn {
+    @apply px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150;
+  }
+
+  .ios-segmented-btn-active {
+    @apply bg-white dark:bg-[#25252A] text-foreground shadow-sm;
+  }
+
+  .ios-segmented-btn-inactive {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  .serif-italic-accent {
+    font-family: "Playfair Display", Georgia, serif;
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-max {
+    @apply max-w-6xl mx-auto;
+  }
+}
+
+/* iOS custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-black/15 dark:bg-white/20 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-black/25 dark:bg-white/30;
+}
