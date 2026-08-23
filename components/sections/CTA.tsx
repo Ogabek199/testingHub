@@ -19,7 +19,7 @@ export function CTA() {
           <div className="relative z-10 max-w-2xl mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Sifat va Ishonch</span>
+              <span>{t("cta.badge")}</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
@@ -42,12 +42,13 @@ export function CTA() {
               <a
                 href="https://t.me/Javohiir"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 transition-all"
               >
                 <Send className="h-4 w-4" />
                 <span>{t("cta.btnTelegram")}</span>
               </a>
+
             </div>
           </div>
         </div>

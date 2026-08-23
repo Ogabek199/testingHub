@@ -33,12 +33,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              "flex h-10 w-full rounded-xl border bg-white dark:bg-zinc-900 px-3 py-2 text-sm",
-              "border-zinc-200 dark:border-zinc-700",
-              "text-zinc-900 dark:text-zinc-100",
-              "placeholder:text-zinc-400 dark:placeholder:text-zinc-500",
+              "flex h-10 w-full rounded-xl border bg-black/[0.02] dark:bg-white/[0.04] px-3 py-2 text-sm",
+              "border-black/[0.08] dark:border-white/[0.1]",
+              "text-foreground",
+              "placeholder:text-muted-foreground",
               "transition-colors duration-200",
-              "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 focus:border-transparent",
+              "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1 focus:border-transparent",
               "disabled:cursor-not-allowed disabled:opacity-50",
               error &&
                 "border-red-400 dark:border-red-500 focus:ring-red-500",
@@ -48,6 +48,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             )}
             {...props}
           />
+
           {rightIcon && (
             <span className="absolute right-3 text-zinc-400 dark:text-zinc-500">
               {rightIcon}

@@ -23,18 +23,18 @@ const stats = [
 
 export function Stats() {
   return (
-    <section className="py-16 md:py-24 border-y border-zinc-200/80 dark:border-zinc-800/80">
+    <section className="py-16 md:py-24 border-y border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#0B0B0E]">
       <div className="container-max section-padding">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {stats.map((stat, i) => (
             <div key={i} className="flex flex-col items-center text-center group">
-              <div className="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white mb-1 tabular-nums group-hover:text-indigo-500 dark:group-hover:text-indigo-400 transition-colors duration-200">
+              <div className="text-4xl md:text-5xl font-black text-foreground mb-1 tabular-nums group-hover:text-primary transition-colors duration-200">
                 {stat.value}
               </div>
-              <div className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-0.5">
+              <div className="text-sm font-semibold text-foreground/80 mb-0.5">
                 {stat.label}
               </div>
-              <div className="text-xs text-zinc-400 dark:text-zinc-500">
+              <div className="text-xs text-muted-foreground">
                 {stat.description}
               </div>
             </div>
@@ -44,3 +44,4 @@ export function Stats() {
     </section>
   );
 }
+

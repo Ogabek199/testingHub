@@ -1,0 +1,20 @@
+{
+  "name": "QA.TestingHub — Professional QA Testing Platform",
+  "short_name": "TestingHub",
+  "description": "Professional QA va dasturiy ta'minot sinov xizmati. O'zbekistonning #1 QA platformasi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF8",
+  "theme_color": "#FF6B47",
+  "orientation": "portrait-primary",
+  "lang": "uz",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "developer tools"]
+}

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { formatNumber } from "@/lib/utils";
 import { 
   Code2, 
   FlaskConical, 
@@ -34,8 +35,8 @@ export function BugCostChart() {
       textColor: "text-emerald-600 dark:text-emerald-400",
       bgColor: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/40",
       height: "h-24 md:h-32",
-      risk: "Juda past",
-      timeToFix: "5 - 15 daqiqa",
+      riskKey: "bugCost.riskVeryLow",
+      timeKey: "bugCost.timeDev",
       badgeVariant: "success"
     },
     {
@@ -50,8 +51,8 @@ export function BugCostChart() {
       textColor: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/40",
       height: "h-36 md:h-48",
-      risk: "O'rta",
-      timeToFix: "1 - 3 soat",
+      riskKey: "bugCost.riskMedium",
+      timeKey: "bugCost.timeTest",
       badgeVariant: "info"
     },
     {
@@ -66,8 +67,8 @@ export function BugCostChart() {
       textColor: "text-amber-600 dark:text-amber-400",
       bgColor: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/40",
       height: "h-48 md:h-64",
-      risk: "Yuqori",
-      timeToFix: "1 - 3 kun",
+      riskKey: "bugCost.riskHigh",
+      timeKey: "bugCost.timeUat",
       badgeVariant: "warning"
     },
     {
@@ -82,8 +83,8 @@ export function BugCostChart() {
       textColor: "text-coral-600 dark:text-coral-400",
       bgColor: "bg-coral-50 dark:bg-coral-950/40 border-coral-200 dark:border-coral-800/40",
       height: "h-64 md:h-80",
-      risk: "Favqulodda (Kritik)",
-      timeToFix: "3 - 10+ kun (Hotfix)",
+      riskKey: "bugCost.riskCritical",
+      timeKey: "bugCost.timeProd",
       badgeVariant: "danger"
     },
   ];
@@ -104,7 +105,7 @@ export function BugCostChart() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-coral-50 dark:bg-coral-950/60 border border-coral-200/80 dark:border-coral-800/50 text-coral-600 dark:text-coral-400 text-xs font-semibold uppercase tracking-wider mb-4">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span>Infografika & Tahlil</span>
+            <span>{t("bugCost.badge")}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
             {t("bugCost.title")}
@@ -179,7 +180,7 @@ export function BugCostChart() {
                       {t(currentStage.titleKey)}
                     </h3>
                     <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-black/30 ${currentStage.textColor}`}>
-                      Taxminiy narx: {currentStage.cost}
+                      {t("bugCost.estCostLabel")}: {currentStage.cost}
                     </span>
                   </div>
                   <p className="text-sm text-foreground/80 mt-1.5 leading-relaxed">
@@ -190,12 +191,12 @@ export function BugCostChart() {
 
               <div className="flex items-center gap-4 text-xs shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-black/10 dark:border-white/10">
                 <div className="bg-white dark:bg-black/30 px-3 py-2 rounded-xl">
-                  <span className="text-muted-foreground block">Tuzatish vaqti:</span>
-                  <span className="font-semibold text-foreground">{currentStage.timeToFix}</span>
+                  <span className="text-muted-foreground block">{t("bugCost.timeToFixLabel")}</span>
+                  <span className="font-semibold text-foreground">{t(currentStage.timeKey)}</span>
                 </div>
                 <div className="bg-white dark:bg-black/30 px-3 py-2 rounded-xl">
-                  <span className="text-muted-foreground block">Biznes xatari:</span>
-                  <span className="font-semibold text-foreground">{currentStage.risk}</span>
+                  <span className="text-muted-foreground block">{t("bugCost.riskLabel")}</span>
+                  <span className="font-semibold text-foreground">{t(currentStage.riskKey)}</span>
                 </div>
               </div>
             </div>
@@ -213,18 +214,18 @@ export function BugCostChart() {
                   {t("bugCost.simulatorTitle")}
                 </h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                  Real vaqt hisobi
+                  {t("bugCost.realtimeBadge")}
                 </span>
               </div>
               <p className="text-sm text-muted-foreground mb-6">
-                Loyihangizdagi taxminiy funksiyalar va modullarga qarab kutilayotgan xatolar sonini belgilang:
+                {t("bugCost.simulatorSubtitle")}
               </p>
 
               {/* Slider */}
               <div className="space-y-3 bg-black/[0.02] dark:bg-white/[0.02] p-4 rounded-2xl border border-black/[0.04] dark:border-white/[0.04]">
                 <div className="flex justify-between items-center text-sm font-semibold">
                   <span>{t("bugCost.bugsCountLabel")}</span>
-                  <span className="text-xl font-black text-coral-500">{bugCount} ta bug</span>
+                  <span className="text-xl font-black text-coral-500">{bugCount} {t("bugCost.bugsUnit")}</span>
                 </div>
                 <input
                   type="range"
@@ -235,9 +236,9 @@ export function BugCostChart() {
                   className="w-full accent-primary h-2 bg-black/10 dark:bg-white/15 rounded-lg cursor-pointer"
                 />
                 <div className="flex justify-between text-[11px] text-muted-foreground font-medium">
-                  <span>3 (Kichik startap)</span>
-                  <span>25 (O&apos;rta ERP)</span>
-                  <span>60 (Katta platforma)</span>
+                  <span>3 ({t("bugCost.sliderSmall")})</span>
+                  <span>25 ({t("bugCost.sliderMedium")})</span>
+                  <span>60 ({t("bugCost.sliderLarge")})</span>
                 </div>
               </div>
 
@@ -248,10 +249,10 @@ export function BugCostChart() {
                     {t("bugCost.withoutQA")}
                   </span>
                   <span className="text-2xl font-black text-red-600 dark:text-red-400 mt-1 block">
-                    ${costWithoutQA.toLocaleString()}
+                    ${formatNumber(costWithoutQA)}
                   </span>
                   <span className="text-[11px] text-muted-foreground mt-1 block">
-                    Productionda 70% xatolar uchrab qolgan holatda
+                    {t("bugCost.withoutQASub")}
                   </span>
                 </div>
 
@@ -260,10 +261,10 @@ export function BugCostChart() {
                     {t("bugCost.withQA")}
                   </span>
                   <span className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1 block">
-                    ${costWithQA.toLocaleString()}
+                    ${formatNumber(costWithQA)}
                   </span>
                   <span className="text-[11px] text-muted-foreground mt-1 block">
-                    Barcha xatolar QA test bosqichida ushlanganda
+                    {t("bugCost.withQASub")}
                   </span>
                 </div>
               </div>
@@ -276,14 +277,15 @@ export function BugCostChart() {
                   {t("bugCost.savings")}
                 </span>
                 <p className="text-2xl md:text-3xl font-black text-coral-600 dark:text-coral-400 mt-0.5">
-                  +${netSavings.toLocaleString()} USD
+                  +${formatNumber(netSavings)} USD
                 </p>
               </div>
+
               <Link
                 href="/#calculator"
                 className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium text-xs md:text-sm flex items-center gap-1.5 shadow-coral-glow transition-all"
               >
-                <span>Hisoblab ko&apos;rish</span>
+                <span>{t("bugCost.btnCalculate")}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -299,7 +301,7 @@ export function BugCostChart() {
                 </h3>
               </div>
               <p className="text-xs text-muted-foreground mb-4">
-                Tarixdagi eng mashhur QA etishmovchiligi natijasida ko&apos;rilgan zararlar:
+                {t("bugCost.realWorldSub")}
               </p>
 
               <div className="space-y-3.5">
@@ -343,7 +345,7 @@ export function BugCostChart() {
 
             <div className="mt-6 pt-4 border-t border-black/[0.06] dark:border-white/[0.06] flex items-center gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-              <span>TestingHub sifat nazorati har bir relizdan oldin barcha kritik ssenariylarni tekshiradi.</span>
+              <span>{t("bugCost.qualityNote")}</span>
             </div>
           </div>
         </div>

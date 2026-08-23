@@ -33,7 +33,7 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 text-[11px] text-muted-foreground pt-2">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
-              <span>ISTQB va ISO/IEC 25010 sifat standartlariga muvofiq</span>
+              <span>{t("footer.standardsNote")}</span>
             </div>
           </div>
 
@@ -78,16 +78,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/dashboard" className="hover:text-primary transition-colors">
-                  {t("nav.dashboard")}
-                </Link>
-              </li>
-              <li>
-                <a href="https://t.me/Javohiir" target="_blank" rel="noreferrer" className="hover:text-primary transition-colors">
-                  Telegram: @Javohiir
+                <a href="https://t.me/Javohiir" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  Telegram (@Javohiir)
                 </a>
               </li>
             </ul>
+
           </div>
         </div>
 
@@ -97,7 +93,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} TestingHub. {t("footer.rights")}
           </p>
           <div className="flex items-center gap-1 text-[11px]">
-            <span>Sifatli dasturiy ta&apos;minot uchun yaratildi</span>
+            <span>{t("footer.madeFor")}</span>
           </div>
         </div>
       </div>

@@ -31,12 +31,12 @@ export default function RegisterPage() {
     setIsLoading(false);
 
     if (res.success) {
-      toastSuccess("Akkauntingiz muvaffaqiyatli yaratildi!", "Xush kelibsiz");
+      toastSuccess(t("toasts.registerSuccessDesc"), t("toasts.registerSuccessTitle"));
       router.push("/dashboard");
     } else {
-      const errMsg = res.error || "Ro'yxatdan o'tishda xatolik";
+      const errMsg = res.error || t("toasts.registerErrorTitle");
       setError(errMsg);
-      toastError(errMsg, "Xatolik");
+      toastError(errMsg, t("toasts.registerErrorTitle"));
     }
   };
 
@@ -133,7 +133,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                aria-label={showPassword ? "Parolni yashirish" : "Parolni ko'rsatish"}
+                aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
               >
                 {showPassword ? (
                   <EyeOff className="h-4 w-4" />
@@ -150,7 +150,7 @@ export default function RegisterPage() {
             className="w-full mt-2 py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-coral-glow flex items-center justify-center gap-2 transition-all disabled:opacity-50"
           >
             {isLoading ? (
-              <span>Yaratilmoqda...</span>
+              <span>{t("auth.registering")}</span>
             ) : (
               <>
                 <UserPlus className="h-4 w-4" />
@@ -159,6 +159,7 @@ export default function RegisterPage() {
             )}
           </button>
         </form>
+
 
         {/* Switch to login */}
         <p className="text-center text-xs text-muted-foreground mt-6">

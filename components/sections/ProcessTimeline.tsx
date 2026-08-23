@@ -47,7 +47,7 @@ export function ProcessTimeline() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.08] text-xs font-semibold text-foreground mb-4">
             <CheckCheck className="h-3.5 w-3.5 text-primary" />
-            <span>Bosqichlar</span>
+            <span>{t("process.badge")}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
             {t("process.title")}

@@ -25,9 +25,9 @@ function LoginForm() {
 
   useEffect(() => {
     if (reason === "auth_required") {
-      toastWarning("Dashboard sahifasiga kirish uchun tizimga kiring!", "Xavfsizlik");
+      toastWarning(t("toasts.authRequiredDesc"), t("toasts.authRequiredTitle"));
     }
-  }, [reason]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [reason, t]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -44,13 +44,13 @@ function LoginForm() {
     setIsLoading(false);
 
     if (res.success) {
-      toastSuccess("Tizimga muvaffaqiyatli kirdingiz!", "Xush kelibsiz");
+      toastSuccess(t("toasts.loginSuccessDesc"), t("toasts.loginSuccessTitle"));
       const redirect = searchParams.get("redirect") || "/dashboard";
       router.push(redirect);
     } else {
-      const errMsg = res.error || "Kirishda xatolik yuz berdi";
+      const errMsg = res.error || t("toasts.loginErrorTitle");
       setError(errMsg);
-      toastError(errMsg, "Kirishda xatolik");
+      toastError(errMsg, t("toasts.loginErrorTitle"));
     }
   };
 
@@ -129,7 +129,7 @@ function LoginForm() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-              aria-label={showPassword ? "Parolni yashirish" : "Parolni ko'rsatish"}
+              aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
             >
               {showPassword ? (
                 <EyeOff className="h-4 w-4" />
@@ -146,7 +146,7 @@ function LoginForm() {
           className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-coral-glow flex items-center justify-center gap-2 transition-all disabled:opacity-50"
         >
           {isLoading ? (
-            <span>Kirilmoqda...</span>
+            <span>{t("auth.loggingIn")}</span>
           ) : (
             <>
               <LogIn className="h-4 w-4" />
@@ -155,6 +155,7 @@ function LoginForm() {
           )}
         </button>
       </form>
+
 
       {/* Switch to register */}
       <p className="text-center text-xs text-muted-foreground mt-6">

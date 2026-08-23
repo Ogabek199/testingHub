@@ -1,2 +1,23 @@
+# QA.TestingHub - Robots.txt
+# https://testinghub.uz
+
 User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /login
+Disallow: /register
+Disallow: /api/*
+
+# Sitemap
+Sitemap: https://testinghub.uz/sitemap.xml
+
+# Crawl-delay (optional, for polite crawling)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandex
 Allow: /

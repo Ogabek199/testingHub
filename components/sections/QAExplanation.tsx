@@ -14,7 +14,7 @@ export function QAExplanation() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.08] text-xs font-semibold text-foreground mb-4">
             <HelpCircle className="h-3.5 w-3.5 text-primary" />
-            <span>Ta&apos;lim va Tushuncha</span>
+            <span>{t("qaInfo.badge")}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
             {t("qaInfo.title")}
@@ -30,9 +30,9 @@ export function QAExplanation() {
           <div className="ios-card p-6 md:p-8 bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08]">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-black/10 dark:bg-white/10 text-muted-foreground uppercase">
-                Reaktiv yondashuv
+                {t("qaInfo.reactiveBadge")}
               </span>
-              <span className="text-xs text-muted-foreground font-mono">Bajarish bosqichi</span>
+              <span className="text-xs text-muted-foreground font-mono">{t("qaInfo.executionStage")}</span>
             </div>
             <h3 className="text-xl font-bold text-foreground">
               {t("qaInfo.testingConcept")}
@@ -43,11 +43,11 @@ export function QAExplanation() {
             <ul className="mt-6 space-y-2.5 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
-                <span>Kod yozib bo&apos;lingandan so&apos;ng tekshiriladi</span>
+                <span>{t("qaInfo.testingPoint1")}</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground" />
-                <span>Asosiy maqsad: Xatolarni ro&apos;yxatga olish</span>
+                <span>{t("qaInfo.testingPoint2")}</span>
               </li>
             </ul>
           </div>
@@ -56,9 +56,9 @@ export function QAExplanation() {
           <div className="ios-card p-6 md:p-8 bg-primary/[0.03] dark:bg-primary/[0.07] border-primary/30 ring-1 ring-primary/20">
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary text-white uppercase">
-                Proaktiv yondashuv
+                {t("qaInfo.proactiveBadge")}
               </span>
-              <span className="text-xs text-primary font-mono font-bold">Butun hayotiy sikl</span>
+              <span className="text-xs text-primary font-mono font-bold">{t("qaInfo.lifecycleStage")}</span>
             </div>
             <h3 className="text-xl font-bold text-foreground">
               {t("qaInfo.qaConcept")}
@@ -69,11 +69,11 @@ export function QAExplanation() {
             <ul className="mt-6 space-y-2.5 text-xs text-foreground/90 font-medium">
               <li className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary" />
-                <span>Xatolar paydo bo&apos;lishining oldini oladi</span>
+                <span>{t("qaInfo.qaPoint1")}</span>
               </li>
               <li className="flex items-center gap-2">
                 <Check className="h-4 w-4 text-primary" />
-                <span>Arxitektura va biznes mantiqni boshidanoq mustahkamlaydi</span>
+                <span>{t("qaInfo.qaPoint2")}</span>
               </li>
             </ul>
           </div>

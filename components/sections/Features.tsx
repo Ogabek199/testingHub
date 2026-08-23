@@ -65,14 +65,14 @@ export function Features() {
       <div className="container-max section-padding">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="text-sm font-semibold uppercase tracking-widest text-indigo-500 mb-3">
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">
             Imkoniyatlar
           </p>
-          <h2 className="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 tracking-tight">
             Nima uchun{" "}
-            <span className="gradient-text">TestingHub</span>?
+            <span className="text-primary font-serif italic">TestingHub</span>?
           </h2>
-          <p className="text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed">
+          <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
             Professional dasturiy ta&apos;minot sifatini ta&apos;minlash uchun zarur
             barcha vositalar bir joyda.
           </p>
@@ -81,27 +81,25 @@ export function Features() {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((feature, i) => (
-            <Card
+            <div
               key={i}
-              variant="default"
-              padding="lg"
-              hover
-              className="group"
+              className="ios-card p-6 hover:-translate-y-1 transition-all group"
             >
               <div
                 className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${feature.bg} mb-4 transition-transform duration-200 group-hover:scale-110`}
               >
                 <feature.icon className={`h-5 w-5 ${feature.color}`} />
               </div>
-              <h3 className="font-semibold text-zinc-900 dark:text-white mb-2">
+              <h3 className="font-bold text-foreground mb-2 text-base">
                 {feature.title}
               </h3>
-              <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {feature.description}
               </p>
-            </Card>
+            </div>
           ))}
         </div>
+
       </div>
     </section>
   );

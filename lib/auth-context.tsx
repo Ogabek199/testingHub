@@ -44,24 +44,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, pass: string) => {
     setIsLoading(true);
-    // Simulate auth check
-    await new Promise((res) => setTimeout(res, 500));
+    // Simulate auth check latency
+    await new Promise((res) => setTimeout(res, 400));
 
-    if (!email || !pass) {
+    const cleanEmail = (email || "").trim().toLowerCase();
+    const cleanPass = (pass || "").trim();
+
+    if (!cleanEmail || !cleanPass) {
       setIsLoading(false);
       return { success: false, error: "Email va parolni kiriting!" };
     }
 
-    if (pass.length < 4) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
       setIsLoading(false);
-      return { success: false, error: "Parol kamida 4 ta belgidan iborat bo'lishi kerak." };
+      return { success: false, error: "Email formati noto'g'ri (masalan: user@example.com)!" };
     }
 
+    if (cleanPass.length < 6) {
+      setIsLoading(false);
+      return { success: false, error: "Parol kamida 6 ta belgidan iborat bo'lishi kerak." };
+    }
+
+    const displayName = cleanEmail.split("@")[0];
+    const formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
     const authUser: User = {
-      id: "usr_" + Math.random().toString(36).substring(2, 8),
-      name: email.split("@")[0].toUpperCase() || "Ali Valiyev",
-      email,
-      company: "Tech Solutions",
+      id: "usr_" + Math.random().toString(36).substring(2, 9),
+      name: formattedName || "Foydalanuvchi",
+      email: cleanEmail,
+      company: "QA Partner Enterprise",
       role: "qa_lead",
     };
 
@@ -77,18 +89,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (name: string, email: string, pass: string, company?: string) => {
     setIsLoading(true);
-    await new Promise((res) => setTimeout(res, 600));
+    await new Promise((res) => setTimeout(res, 500));
 
-    if (!name || !email || !pass) {
+    const cleanName = (name || "").trim();
+    const cleanEmail = (email || "").trim().toLowerCase();
+    const cleanPass = (pass || "").trim();
+    const cleanCompany = (company || "").trim();
+
+    if (!cleanName || !cleanEmail || !cleanPass) {
       setIsLoading(false);
       return { success: false, error: "Barcha majburiy maydonlarni to'ldiring!" };
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      setIsLoading(false);
+      return { success: false, error: "Email formati noto'g'ri (masalan: client@example.com)!" };
+    }
+
+    if (cleanPass.length < 6) {
+      setIsLoading(false);
+      return { success: false, error: "Parol kamida 6 ta belgidan iborat bo'lishi kerak." };
+    }
+
     const authUser: User = {
-      id: "usr_" + Math.random().toString(36).substring(2, 8),
-      name,
-      email,
-      company: company || "Startup Ltd",
+      id: "usr_" + Math.random().toString(36).substring(2, 9),
+      name: cleanName,
+      email: cleanEmail,
+      company: cleanCompany || "Loyiha egasi",
       role: "client",
     };
 
@@ -101,6 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
     return { success: true };
   };
+
 
   const logout = () => {
     setUser(null);

@@ -9,17 +9,49 @@ import { ProcessTimeline } from "@/components/sections/ProcessTimeline";
 import { CaseStudies } from "@/components/sections/CaseStudies";
 import { CTA } from "@/components/sections/CTA";
 
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import {
+  OrganizationJsonLd,
+  WebSiteJsonLd,
+  SoftwareApplicationJsonLd,
+  ProfessionalServiceJsonLd,
+  FAQJsonLd,
+} from "@/components/seo/JsonLd";
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Hero />
-      <BugCostChart />
-      <QACalculator />
-      <QAExplanation />
-      <ServicesComparison />
-      <ProcessTimeline />
-      <CaseStudies />
-      <CTA />
+      {/* SEO: Structured Data (JSON-LD) */}
+      <OrganizationJsonLd />
+      <WebSiteJsonLd />
+      <SoftwareApplicationJsonLd />
+      <ProfessionalServiceJsonLd />
+      <FAQJsonLd />
+
+      <ErrorBoundary>
+        <Hero />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <BugCostChart />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <QACalculator />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <QAExplanation />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <ServicesComparison />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <ProcessTimeline />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <CaseStudies />
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <CTA />
+      </ErrorBoundary>
     </div>
   );
 }

@@ -62,7 +62,7 @@ export default function DashboardLayout({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <div className="h-10 w-10 border-3 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm font-semibold text-muted-foreground">Xavfsizlik tekshiruvi...</p>
+        <p className="text-sm font-semibold text-muted-foreground">{t("auth.securityChecking")}</p>
       </div>
     );
   }
@@ -72,15 +72,15 @@ export default function DashboardLayout({
       <div className="min-h-screen flex items-center justify-center p-4 bg-background">
         <div className="ios-card max-w-md w-full p-8 text-center">
           <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-foreground mb-2">Ruxsat cheklangan</h2>
+          <h2 className="text-xl font-bold text-foreground mb-2">{t("auth.unauthorizedTitle")}</h2>
           <p className="text-xs text-muted-foreground mb-6">
-            Dashboard sahifasiga kirish uchun tizimga kiring.
+            {t("auth.unauthorizedDesc")}
           </p>
           <Link
             href="/login?redirect=/dashboard&reason=auth_required"
             className="px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-coral-glow inline-block"
           >
-            Kirish sahifasiga o&apos;tish
+            {t("auth.btnGoLogin")}
           </Link>
         </div>
       </div>
@@ -104,7 +104,7 @@ export default function DashboardLayout({
                 </span>
               </Link>
               <span className="hidden md:inline-flex text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
-                Himoyalangan muhit
+                {t("dashboard.securedEnvironment")}
               </span>
             </div>
 
@@ -116,8 +116,9 @@ export default function DashboardLayout({
                 className="px-3 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1.5 transition-colors"
               >
                 <Home className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Saytga qaytish</span>
+                <span className="hidden sm:inline">{t("dashboard.backToSite")}</span>
               </Link>
+
 
               {/* Segmented Lang Switcher */}
               <div className="ios-segmented">
@@ -164,7 +165,7 @@ export default function DashboardLayout({
                 </div>
                 <button
                   onClick={() => {
-                    toastInfo("Tizimdan chiqildi", "Xayr!");
+                    toastInfo(t("toasts.logoutDesc"), t("toasts.logoutTitle"));
                     logout();
                   }}
                   title="Chiqish"

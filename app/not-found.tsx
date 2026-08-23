@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { SeoHead } from "@/components/seo/SeoHead";
 import { ArrowLeft, Home, FlaskConical, AlertCircle } from "lucide-react";
 
 export default function NotFound() {
@@ -10,6 +11,11 @@ export default function NotFound() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-16 px-4">
+      <SeoHead
+        title="404 — Sahifa topilmadi"
+        description="Kechirasiz, siz qidirayotgan sahifa topilmadi."
+        noindex={true}
+      />
       <div className="ios-card max-w-md w-full p-8 md:p-10 text-center shadow-ios-lg">
         {/* Animated Badge */}
         <div className="h-16 w-16 rounded-3xl bg-coral-50 dark:bg-coral-950/60 text-primary flex items-center justify-center mx-auto mb-6">

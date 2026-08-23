@@ -4,13 +4,11 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation, Language } from "@/lib/i18n";
-import { useAuth } from "@/lib/auth-context";
-import { Menu, X, Sun, Moon, Sparkles, UserCheck, ShieldCheck, LogIn, LayoutDashboard } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
   const { language, setLanguage, t } = useTranslation();
-  const { user, isAuthenticated } = useAuth();
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -85,15 +83,6 @@ export function Header() {
               className="px-3.5 xl:px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap shrink-0"
             >
               {t("nav.navConsult")}
-            </Link>
-
-            {/* Dashboard Link */}
-            <Link
-              href="/dashboard"
-              className="px-2.5 xl:px-3 py-1.5 rounded-lg bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-foreground font-semibold text-xs flex items-center gap-1.5 transition-all whitespace-nowrap shrink-0"
-            >
-              <LayoutDashboard className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span>{t("nav.dashboard")}</span>
             </Link>
 
             {/* Segmented 3-Language Switcher (UZ | RU | EN) matching screenshot */}
@@ -182,14 +171,6 @@ export function Header() {
               </a>
             ))}
             <div className="pt-2 flex flex-col gap-2">
-              <Link
-                href="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full py-2.5 px-4 rounded-xl bg-black/[0.05] dark:bg-white/[0.08] text-foreground font-semibold text-xs text-center flex items-center justify-center gap-2"
-              >
-                <LayoutDashboard className="h-4 w-4 text-primary" />
-                <span>{t("nav.dashboard")}</span>
-              </Link>
               <Link
                 href="/#calculator"
                 onClick={() => setMobileMenuOpen(false)}

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { SeoHead } from "@/components/seo/SeoHead";
 import { ShieldCheck, ArrowLeft, Lock, FileText, CheckCircle2 } from "lucide-react";
 
 export default function PrivacyPolicyPage() {
@@ -10,6 +11,15 @@ export default function PrivacyPolicyPage() {
 
   return (
     <div className="py-12 md:py-20 bg-background">
+      <SeoHead
+        title="Maxfiylik siyosati — QA.TestingHub"
+        description="QA.TestingHub maxfiylik siyosati. Shaxsiy ma'lumotlaringiz qanday himoyalanishi haqida to'liq ma'lumot."
+        canonical="https://testinghub.uz/privacy"
+        breadcrumbs={[
+          { name: "Bosh sahifa", url: "https://testinghub.uz" },
+          { name: "Maxfiylik siyosati", url: "https://testinghub.uz/privacy" },
+        ]}
+      />
       <div className="container-max section-padding max-w-4xl">
         {/* Back Link */}
         <Link
@@ -24,7 +34,7 @@ export default function PrivacyPolicyPage() {
         <div className="ios-card p-8 md:p-12 mb-8 bg-gradient-to-b from-white to-cream-100/50 dark:from-[#18181C] dark:to-[#121215]">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
             <ShieldCheck className="h-4 w-4" />
-            <span>Xavfsizlik & Maxfiylik</span>
+            <span>{t("privacy.badge")}</span>
           </div>
 
           <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">

@@ -13,24 +13,24 @@ export function CaseStudies() {
       problemKey: "cases.case1Problem",
       solutionKey: "cases.case1Solution",
       resultKey: "cases.case1Result",
-      tag: "Fintech",
-      impact: "+$45,000 Tejaldi",
+      tagKey: "cases.tagFintech",
+      impactKey: "cases.case1Impact",
     },
     {
       titleKey: "cases.case2Name",
       problemKey: "cases.case2Problem",
       solutionKey: "cases.case2Solution",
       resultKey: "cases.case2Result",
-      tag: "E-Commerce",
-      impact: "+24% Konversiya",
+      tagKey: "cases.tagEcommerce",
+      impactKey: "cases.case2Impact",
     },
     {
       titleKey: "cases.case3Name",
       problemKey: "cases.case3Problem",
       solutionKey: "cases.case3Solution",
       resultKey: "cases.case3Result",
-      tag: "B2B SaaS",
-      impact: "12 Zaiflik Yopildi",
+      tagKey: "cases.tagB2b",
+      impactKey: "cases.case3Impact",
     },
   ];
 
@@ -41,7 +41,7 @@ export function CaseStudies() {
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.06] dark:border-white/[0.08] text-xs font-semibold text-foreground mb-4">
             <Award className="h-3.5 w-3.5 text-primary" />
-            <span>Tajriba va Natijalar</span>
+            <span>{t("cases.badge")}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
             {t("cases.title")}
@@ -61,10 +61,10 @@ export function CaseStudies() {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-[11px] font-bold px-2.5 py-1 rounded-md bg-black/5 dark:bg-white/10 text-muted-foreground uppercase">
-                    {c.tag}
+                    {t(c.tagKey)}
                   </span>
                   <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md">
-                    {c.impact}
+                    {t(c.impactKey)}
                   </span>
                 </div>
 
@@ -76,7 +76,7 @@ export function CaseStudies() {
                   <div className="p-3 rounded-xl bg-red-500/[0.05] border border-red-500/15">
                     <span className="font-bold text-red-600 dark:text-red-400 block mb-0.5 flex items-center gap-1">
                       <AlertTriangle className="h-3.5 w-3.5" />
-                      Muammo:
+                      {t("cases.problemLabel")}
                     </span>
                     <p className="text-muted-foreground leading-relaxed">
                       {t(c.problemKey)}
@@ -86,7 +86,7 @@ export function CaseStudies() {
                   <div className="p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.04]">
                     <span className="font-bold text-foreground block mb-0.5 flex items-center gap-1">
                       <ShieldCheck className="h-3.5 w-3.5 text-primary" />
-                      Yechim:
+                      {t("cases.solutionLabel")}
                     </span>
                     <p className="text-muted-foreground leading-relaxed">
                       {t(c.solutionKey)}
@@ -98,7 +98,7 @@ export function CaseStudies() {
               <div className="mt-4 pt-4 border-t border-black/[0.06] dark:border-white/[0.06]">
                 <span className="font-bold text-emerald-600 dark:text-emerald-400 text-xs block mb-0.5 flex items-center gap-1">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  Natija:
+                  {t("cases.resultLabel")}
                 </span>
                 <p className="text-xs text-foreground/90 font-medium">
                   {t(c.resultKey)}

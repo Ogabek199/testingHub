@@ -1,24 +1,20 @@
-import type { Metadata } from "next";
+"use client";
+
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Card } from "@/components/ui/Card";
+import { useTranslation } from "@/lib/i18n";
+import { SeoHead } from "@/components/seo/SeoHead";
 import {
   Plus,
   Search,
   Filter,
   FlaskConical,
   Clock,
-  CheckCircle,
+  CheckCircle2,
   XCircle,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Testlar",
-  description: "Barcha test holatlarini ko'ring va boshqaring",
-};
 
 const tests = [
   {
@@ -28,7 +24,7 @@ const tests = [
     status: "passed",
     category: "API",
     duration: "1.2s",
-    lastRun: "2 soat oldin",
+    lastRun: "14:30",
     passRate: 100,
   },
   {
@@ -38,7 +34,7 @@ const tests = [
     status: "passed",
     category: "Database",
     duration: "2.8s",
-    lastRun: "3 soat oldin",
+    lastRun: "11:15",
     passRate: 98,
   },
   {
@@ -48,7 +44,7 @@ const tests = [
     status: "failed",
     category: "Storage",
     duration: "4.1s",
-    lastRun: "5 soat oldin",
+    lastRun: "09:40",
     passRate: 67,
   },
   {
@@ -68,7 +64,7 @@ const tests = [
     status: "passed",
     category: "Payment",
     duration: "3.5s",
-    lastRun: "1 kun oldin",
+    lastRun: "Kecha",
     passRate: 95,
   },
   {
@@ -78,130 +74,153 @@ const tests = [
     status: "failed",
     category: "Performance",
     duration: "0.9s",
-    lastRun: "1 kun oldin",
+    lastRun: "Kecha",
     passRate: 45,
   },
 ];
 
-const statusConfig = {
-  passed: {
-    label: "O'tdi",
-    variant: "success" as const,
-    icon: CheckCircle,
-    color: "text-emerald-500",
-  },
-  failed: {
-    label: "Xato",
-    variant: "danger" as const,
-    icon: XCircle,
-    color: "text-red-500",
-  },
-  pending: {
-    label: "Kutmoqda",
-    variant: "warning" as const,
-    icon: Clock,
-    color: "text-amber-500",
-  },
-};
-
 export default function TestsPage() {
+  const { t } = useTranslation();
+  const [activeFilter, setActiveFilter] = useState<"all" | "passed" | "failed" | "pending">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredTests = tests.filter((test) => {
+    const matchesStatus = activeFilter === "all" || test.status === activeFilter;
+    const matchesSearch =
+      test.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      test.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      test.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesStatus && matchesSearch;
+  });
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "passed":
+        return t("tests.tabPassed");
+      case "failed":
+        return t("tests.tabFailed");
+      case "pending":
+        return t("tests.tabPending");
+      default:
+        return status;
+    }
+  };
+
   return (
     <div className="container-max section-padding py-10">
+      <SeoHead
+        title="QA Testlar — Dasturiy ta'minot sinov natijalari"
+        description="QA testing natijalari va test hisobotlari. API, Database, Storage, Payment va boshqa turdagi testlar ro'yxati."
+        canonical="https://testinghub.uz/tests"
+        breadcrumbs={[
+          { name: "Bosh sahifa", url: "https://testinghub.uz" },
+          { name: "Testlar", url: "https://testinghub.uz/tests" },
+        ]}
+      />
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
-            Testlar
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+            {t("tests.title")}
           </h1>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
-            {tests.length} ta test topildi
+          <p className="text-xs text-muted-foreground mt-1">
+            {filteredTests.length} {t("tests.found")}
           </p>
         </div>
-        <Button size="sm">
+        <button className="px-4 py-2 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-coral-glow flex items-center justify-center gap-1.5 transition-all">
           <Plus className="h-4 w-4" />
-          Yangi test
-        </Button>
+          <span>{t("tests.btnNew")}</span>
+        </button>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="flex-1">
-          <Input
-            placeholder="Testlarni qidiring..."
-            leftIcon={<Search className="h-4 w-4" />}
+        <div className="flex-1 relative flex items-center">
+          <Search className="h-4 w-4 absolute left-3.5 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t("tests.searchPlaceholder")}
+            className="w-full h-10 pl-10 pr-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-        <Button variant="outline" size="md">
-          <Filter className="h-4 w-4" />
-          Filter
-        </Button>
       </div>
 
       {/* Status tabs */}
-      <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
-        {["Barchasi", "O'tdi", "Xato", "Kutmoqda"].map((tab, i) => (
+      <div className="ios-segmented mb-6">
+        {[
+          { id: "all", label: t("tests.tabAll") },
+          { id: "passed", label: t("tests.tabPassed") },
+          { id: "failed", label: t("tests.tabFailed") },
+          { id: "pending", label: t("tests.tabPending") },
+        ].map((tab) => (
           <button
-            key={tab}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              i === 0
-                ? "bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900"
-                : "bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700"
+            key={tab.id}
+            onClick={() => setActiveFilter(tab.id as any)}
+            className={`ios-segmented-btn ${
+              activeFilter === tab.id
+                ? "ios-segmented-btn-active"
+                : "ios-segmented-btn-inactive"
             }`}
           >
-            {tab}
+            {tab.label}
           </button>
         ))}
       </div>
 
       {/* Test cards */}
       <div className="grid gap-3">
-        {tests.map((test) => {
-          const cfg = statusConfig[test.status as keyof typeof statusConfig];
+        {filteredTests.map((test) => {
+          const isPassed = test.status === "passed";
+          const isFailed = test.status === "failed";
+
           return (
             <Link key={test.id} href={`/tests/${test.id}`}>
-              <Card
-                variant="elevated"
-                padding="md"
-                hover
-                className="group"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800 flex-shrink-0">
-                    <FlaskConical className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-zinc-900 dark:text-zinc-100 truncate group-hover:text-primary transition-colors">
-                          {test.name}
-                        </h3>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-0.5 truncate">
-                          {test.description}
-                        </p>
-                      </div>
-                      <Badge variant={cfg.variant} dot className="flex-shrink-0">
-                        {cfg.label}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 mt-3">
-                      <Badge variant="outline" size="sm">
-                        {test.category}
-                      </Badge>
-                      <span className="text-xs text-zinc-400 dark:text-zinc-500 flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {test.duration}
-                      </span>
-                      <span className="text-xs text-zinc-400 dark:text-zinc-500">
-                        {test.lastRun}
-                      </span>
-                      <span className="ml-auto text-xs font-medium text-zinc-500 dark:text-zinc-400">
-                        {test.passRate}% muvaffaqiyat
-                      </span>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-zinc-300 dark:text-zinc-600 group-hover:text-primary flex-shrink-0 transition-colors mt-3" />
+              <div className="ios-card p-5 hover:border-primary/40 transition-all flex items-start gap-4 group">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary flex-shrink-0">
+                  <FlaskConical className="h-5 w-5" />
                 </div>
-              </Card>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h3 className="font-bold text-foreground truncate group-hover:text-primary transition-colors text-sm">
+                        {test.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                        {test.description}
+                      </p>
+                    </div>
+                    <span
+                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${
+                        isPassed
+                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          : isFailed
+                          ? "bg-red-500/10 text-red-600 dark:text-red-400"
+                          : "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                      }`}
+                    >
+                      {getStatusLabel(test.status)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 mt-3">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/5 dark:bg-white/10 text-muted-foreground uppercase">
+                      {test.category}
+                    </span>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {test.duration}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {test.lastRun}
+                    </span>
+                    <span className="ml-auto text-xs font-bold text-foreground">
+                      {test.passRate}% {t("tests.passRateLabel")}
+                    </span>
+                  </div>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary flex-shrink-0 transition-colors mt-3" />
+              </div>
             </Link>
           );
         })}
@@ -209,3 +228,4 @@ export default function TestsPage() {
     </div>
   );
 }
+

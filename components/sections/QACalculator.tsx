@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useToast } from "@/lib/toast";
+import { formatNumber } from "@/lib/utils";
 import {
   Globe,
   Database,
@@ -19,7 +20,8 @@ import {
   Check,
   X,
   ShieldCheck,
-  FileCheck
+  FileCheck,
+  Rocket
 } from "lucide-react";
 
 interface ServiceItem {
@@ -113,6 +115,7 @@ export function QACalculator() {
   const [packageTier, setPackageTier] = useState<string>("standard");
   const [urgency, setUrgency] = useState<string>("normal");
   const [supportType, setSupportType] = useState<string>("one_time");
+  const [isStartup, setIsStartup] = useState<boolean>(true);
 
   // Modal & Lead state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -130,14 +133,13 @@ export function QACalculator() {
     comment: "",
     honeypot: "", // anti-spam
   });
-  const [formError, setFormError] = useState("");
 
   const toggleService = (id: string) => {
     if (selectedServices.includes(id)) {
       const updated = selectedServices.filter((s) => s !== id);
       setSelectedServices(updated);
       if (updated.length === 0) {
-        toastWarning("Kamida 1 ta xizmat turini tanlashingiz kerak!", "Kalkulyator");
+        toastWarning(t("toasts.calcSelectService"), t("toasts.calculatorTitle"));
       }
     } else {
       setSelectedServices([...selectedServices, id]);
@@ -161,6 +163,10 @@ export function QACalculator() {
         isValid: false,
         minPriceUZS: 0,
         maxPriceUZS: 0,
+        originalMinPriceUZS: 0,
+        originalMaxPriceUZS: 0,
+        savingsUZS: 0,
+        isStartup: false,
         minDays: 0,
         maxDays: 0,
         priceUSD: 0,
@@ -198,11 +204,20 @@ export function QACalculator() {
     // Monthly adjustment (support model)
     const monthlyMultiplier = supportType === "monthly" ? 1.25 : 1.0;
 
-    const calculatedBase = baseTotal * sizeCoeff * packageCoeff * urgencyCoeff * stateCoeff * monthlyMultiplier;
+    // 20% discount for Start-up / MVP projects
+    const startupMultiplier = isStartup ? 0.8 : 1.0;
+
+    const baseCalculated = baseTotal * sizeCoeff * packageCoeff * urgencyCoeff * stateCoeff * monthlyMultiplier;
+    const calculatedBase = baseCalculated * startupMultiplier;
     
     // Smooth rounding to nearest 50,000 UZS
-    const minPriceUZS = Math.max(750000, Math.round((calculatedBase * 0.92) / 50000) * 50000);
-    const maxPriceUZS = Math.max(950000, Math.round((calculatedBase * 1.12) / 50000) * 50000);
+    const originalMinPriceUZS = Math.max(750000, Math.round((baseCalculated * 0.92) / 50000) * 50000);
+    const originalMaxPriceUZS = Math.max(950000, Math.round((baseCalculated * 1.12) / 50000) * 50000);
+
+    const minPriceUZS = Math.max(600000, Math.round((calculatedBase * 0.92) / 50000) * 50000);
+    const maxPriceUZS = Math.max(750000, Math.round((calculatedBase * 1.12) / 50000) * 50000);
+
+    const savingsUZS = isStartup ? originalMinPriceUZS - minPriceUZS : 0;
 
     // Realistic days calculation
     const calculatedDays = Math.round(baseDaysTotal * (sizeCoeff * 0.8) * (urgency === "express" ? 0.75 : urgency === "urgent" ? 0.5 : 1.0));
@@ -215,20 +230,23 @@ export function QACalculator() {
       isValid: true,
       minPriceUZS,
       maxPriceUZS,
+      originalMinPriceUZS,
+      originalMaxPriceUZS,
+      savingsUZS,
+      isStartup,
       minDays,
       maxDays,
       priceUSD,
     };
-  }, [selectedServices, projectState, projectSize, packageTier, urgency, supportType]);
+  }, [selectedServices, projectState, projectSize, packageTier, urgency, supportType, isStartup]);
 
   const handleOpenModal = () => {
     if (selectedServices.length === 0) {
-      toastWarning("Iltimos, so'rov yuborish uchun kamida 1 ta xizmatni tanlang!", "Kalkulyator");
+      toastWarning(t("toasts.calcSelectService"), t("toasts.calculatorTitle"));
       return;
     }
     setIsModalOpen(true);
     setIsSubmitted(false);
-    setFormError("");
   };
 
   const handleSubmitLead = async (e: React.FormEvent) => {
@@ -238,32 +256,25 @@ export function QACalculator() {
     // Validation
     const nameTrim = formData.name.trim();
     if (!nameTrim || nameTrim.length < 3) {
-      const errMsg = "Iltimos, ismingizni to'liq kiriting (kamida 3 ta harf)!";
-      setFormError(errMsg);
-      toastError(errMsg, "Validatsiya xatosi");
+      toastError(t("toasts.valNameMin"), t("toasts.validationErrorTitle"));
       return;
     }
 
     const phoneDigits = formData.phone.replace(/\D/g, "");
     if (phoneDigits.length < 12) {
-      const errMsg = "Iltimos, to'liq telefon raqamingizni kiriting (+998 XX XXX XX XX)!";
-      setFormError(errMsg);
-      toastError(errMsg, "Validatsiya xatosi");
+      toastError(t("toasts.valPhoneInvalid"), t("toasts.validationErrorTitle"));
       return;
     }
 
     if (formData.email.trim()) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(formData.email.trim())) {
-        const errMsg = "Email manzili formati noto'g'ri (masalan: client@example.com)!";
-        setFormError(errMsg);
-        toastError(errMsg, "Validatsiya xatosi");
+        toastError(t("toasts.valEmailInvalid"), t("toasts.validationErrorTitle"));
         return;
       }
     }
 
     setIsSubmitting(true);
-    setFormError("");
 
     const leadId = "QA-" + Math.floor(100000 + Math.random() * 900000);
     setGeneratedLeadId(leadId);
@@ -281,12 +292,12 @@ export function QACalculator() {
       })
       .join(", ");
 
-    const priceText = `${calculation.minPriceUZS.toLocaleString()} – ${calculation.maxPriceUZS.toLocaleString()} UZS (~$${calculation.priceUSD})`;
+    const priceText = `${formatNumber(calculation.minPriceUZS)} – ${formatNumber(calculation.maxPriceUZS)} UZS (~$${formatNumber(calculation.priceUSD)})${isStartup ? " [Start-up -20% chegirma qo'llandi]" : ""}`;
     const durationText = `${calculation.minDays} – ${calculation.maxDays} ish kuni`;
 
     // Secure server-side Telegram dispatch via /api/lead
     try {
-      await fetch("/api/lead", {
+      const res = await fetch("/api/lead", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -305,6 +316,11 @@ export function QACalculator() {
           honeypot: formData.honeypot,
         }),
       });
+
+      const resData = await res.json().catch(() => null);
+      if (!res.ok || resData?.success === false) {
+        console.warn("API Lead response warning:", resData?.error || "Lead API returned error");
+      }
     } catch (err) {
       console.error("API Lead dispatch error:", err);
     }
@@ -328,7 +344,7 @@ export function QACalculator() {
 
     setIsSubmitting(false);
     setIsSubmitted(true);
-    toastSuccess("So'rovingiz qabul qilindi! ID: " + leadId, "Muvaffaqiyatli");
+    toastSuccess(`${t("toasts.leadSuccessDesc")} ID: ${leadId}`, t("toasts.leadSuccessTitle"));
   };
 
   return (
@@ -469,6 +485,54 @@ export function QACalculator() {
               </div>
             </div>
 
+            {/* Special Startup Discount Card */}
+            <div
+              onClick={() => setIsStartup(!isStartup)}
+              className={`p-4 md:p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
+                isStartup
+                  ? "bg-primary/[0.05] dark:bg-primary/[0.1] border-primary ring-1 ring-primary/40 shadow-sm"
+                  : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
+              }`}
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div
+                  className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
+                    isStartup
+                      ? "bg-primary text-white shadow-coral-glow"
+                      : "bg-black/5 dark:bg-white/10 text-muted-foreground"
+                  }`}
+                >
+                  <Rocket className="h-5 w-5" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h4 className="text-sm font-bold text-foreground">
+                      {t("calculator.isStartupLabel")}
+                    </h4>
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-primary text-white tracking-wide">
+                      -20% OFF
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                    {t("calculator.isStartupDesc")}
+                  </p>
+                </div>
+              </div>
+
+              {/* iOS Style Switch */}
+              <div
+                className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out shrink-0 ${
+                  isStartup ? "bg-primary" : "bg-black/20 dark:bg-white/20"
+                }`}
+              >
+                <div
+                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
+                    isStartup ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </div>
+            </div>
+
             {/* Step 4 & 5: Platform & Package Tier */}
             <div className="ios-card p-6 md:p-7">
               <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
@@ -535,7 +599,7 @@ export function QACalculator() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Urgency */}
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground block mb-2">Muddat tezligi:</label>
+                  <label className="text-xs font-semibold text-muted-foreground block mb-2">{t("calculator.urgencyLabel")}</label>
                   <div className="space-y-1.5">
                     {[
                       { id: "normal", labelKey: "calculator.urgencyNormal" },
@@ -560,7 +624,7 @@ export function QACalculator() {
 
                 {/* Model */}
                 <div>
-                  <label className="text-xs font-semibold text-muted-foreground block mb-2">Hamkorlik formati:</label>
+                  <label className="text-xs font-semibold text-muted-foreground block mb-2">{t("calculator.supportTypeLabel")}</label>
                   <div className="space-y-1.5">
                     {[
                       { id: "one_time", labelKey: "calculator.supportOneTime" },
@@ -594,7 +658,7 @@ export function QACalculator() {
                   {t("calculator.estimateTitle")}
                 </h3>
                 <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary uppercase tracking-wider">
-                  {supportType === "monthly" ? "Oylik" : "1 martalik"}
+                  {supportType === "monthly" ? t("calculator.supportMonthlyBadge") : t("calculator.supportOneTimeBadge")}
                 </span>
               </div>
 
@@ -623,15 +687,36 @@ export function QACalculator() {
 
                   {/* Estimated Price */}
                   <div className="p-4 rounded-2xl bg-primary/[0.05] dark:bg-primary/[0.1] border border-primary/20">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {t("calculator.estimatedPrice")}
-                    </span>
-                    <p className="text-2xl md:text-3xl font-black text-primary mt-1">
-                      {calculation.minPriceUZS.toLocaleString()} – {calculation.maxPriceUZS.toLocaleString()} UZS
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {t("calculator.estimatedPrice")}
+                      </span>
+                      {isStartup && (
+                        <span className="text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-primary text-white inline-flex items-center gap-1">
+                          <Rocket className="h-3 w-3" />
+                          {t("calculator.offBadge")}
+                        </span>
+                      )}
+                    </div>
+
+                    {isStartup && (
+                      <span className="text-xs line-through text-muted-foreground/70 font-semibold block mt-1.5">
+                        {formatNumber(calculation.originalMinPriceUZS)} – {formatNumber(calculation.originalMaxPriceUZS)} {t("calculator.currencyUnit")}
+                      </span>
+                    )}
+
+                    <p className={`text-2xl md:text-3xl font-black text-primary ${isStartup ? "mt-0.5" : "mt-1"}`}>
+                      {formatNumber(calculation.minPriceUZS)} – {formatNumber(calculation.maxPriceUZS)} {t("calculator.currencyUnit")}
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Taxminan ~${calculation.priceUSD.toLocaleString()} USD
-                    </p>
+
+                    <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
+                      <span>{t("calculator.approxPrefix")} ~${formatNumber(calculation.priceUSD)} USD</span>
+                      {isStartup && calculation.savingsUZS > 0 && (
+                        <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                          {t("calculator.savingsText")} ~{formatNumber(calculation.savingsUZS)} {t("calculator.currencyUnit")}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Estimated Timeline */}
@@ -653,19 +738,19 @@ export function QACalculator() {
                     <ul className="space-y-2 text-xs text-muted-foreground">
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>Kritik va asosiy user flow&apos;lar tekshiruvi</span>
+                        <span>{t("calculator.includedItem1")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>Batafsil Bug Report (Skrinshot, Video va Loglar)</span>
+                        <span>{t("calculator.includedItem2")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>Retest (Tuzatilgan xatolarni qayta tekshirish)</span>
+                        <span>{t("calculator.includedItem3")}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
-                        <span>Maxfiylik kafolati (NDA)</span>
+                        <span>{t("calculator.includedItem4")}</span>
                       </li>
                     </ul>
                   </div>
@@ -678,12 +763,13 @@ export function QACalculator() {
                   {/* CTA Button */}
                   <button
                     onClick={handleOpenModal}
-                    className="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-coral-glow flex items-center justify-center gap-2 active:scale-[0.98] transition-all"
+                    className="w-full py-3.5 px-6 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-coral-glow flex items-center justify-center gap-2 active:scale-[0.98] transition-all whitespace-nowrap"
                   >
-                    <Send className="h-4 w-4" />
+                    <Send className="h-4 w-4 shrink-0" />
                     <span>{t("calculator.btnSubmitLead")}</span>
                   </button>
                 </div>
+
               ) : (
                 <div className="py-12 text-center">
                   <AlertCircle className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
@@ -717,13 +803,6 @@ export function QACalculator() {
                   {t("calculator.modalSubtitle")}
                 </p>
 
-                {formError && (
-                  <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 text-xs font-medium flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 shrink-0" />
-                    <span>{formError}</span>
-                  </div>
-                )}
-
                 <form onSubmit={handleSubmitLead} className="space-y-4">
                   {/* Honeypot for spam bots */}
                   <input
@@ -733,8 +812,10 @@ export function QACalculator() {
                     onChange={(e) => setFormData({ ...formData, honeypot: e.target.value })}
                     className="hidden"
                     tabIndex={-1}
+                    aria-hidden="true"
                     autoComplete="off"
                   />
+
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -746,7 +827,7 @@ export function QACalculator() {
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Ali Valiyev"
+                        placeholder={t("calculator.fieldNamePlaceholder")}
                         className="w-full h-10 px-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
@@ -777,7 +858,7 @@ export function QACalculator() {
                         type="email"
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="client@example.com"
+                        placeholder={t("calculator.fieldEmailPlaceholder")}
                         className="w-full h-10 px-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
@@ -795,7 +876,7 @@ export function QACalculator() {
                             setFormData({ ...formData, telegram: "@" + val });
                           }
                         }}
-                        placeholder="@username"
+                        placeholder={t("calculator.fieldTelegramPlaceholder")}
                         className="w-full h-10 px-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                       />
                     </div>
@@ -809,7 +890,7 @@ export function QACalculator() {
                       type="text"
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      placeholder="Kompaniya nomi yoki startup"
+                      placeholder={t("calculator.fieldCompanyPlaceholder")}
                       className="w-full h-10 px-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
@@ -822,7 +903,7 @@ export function QACalculator() {
                       rows={2}
                       value={formData.comment}
                       onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-                      placeholder="Loyiha tafsilotlari yoki qo'shimcha talablar..."
+                      placeholder={t("calculator.fieldCommentPlaceholder")}
                       className="w-full p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.04] border border-black/[0.08] dark:border-white/[0.1] text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                     />
                   </div>
@@ -830,15 +911,22 @@ export function QACalculator() {
                   {/* Summary preview */}
                   <div className="p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.04] text-xs space-y-1">
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Kalkulyator hisobi:</span>
+                      <span>{t("calculator.estimateTitle")}:</span>
                       <span className="font-bold text-foreground">
-                        {calculation.minPriceUZS.toLocaleString()} – {calculation.maxPriceUZS.toLocaleString()} UZS
+                        {formatNumber(calculation.minPriceUZS)} – {formatNumber(calculation.maxPriceUZS)} {t("calculator.currencyUnit")}
                       </span>
+
                     </div>
+                    {isStartup && (
+                      <div className="flex justify-between text-coral-600 dark:text-coral-400 font-semibold">
+                        <span>{t("calculator.savingsText")}</span>
+                        <span>{t("calculator.startupDiscountBadge")}</span>
+                      </div>
+                    )}
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Muddati:</span>
+                      <span>{t("calculator.estimatedDuration")}</span>
                       <span className="font-bold text-foreground">
-                        {calculation.minDays} – {calculation.maxDays} ish kuni
+                        {calculation.minDays} – {calculation.maxDays} {t("calculator.daysUnit")}
                       </span>
                     </div>
                   </div>

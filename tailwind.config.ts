@@ -29,6 +29,7 @@ const config: Config = {
           700: "#a62a22",
           800: "#89261f",
           900: "#72241f",
+          950: "#3d1310",
         },
         coral: {
           50: "#fff5f4",
@@ -41,6 +42,7 @@ const config: Config = {
           700: "#a72922",
           800: "#8a2620",
           900: "#732520",
+          950: "#3d1310",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
