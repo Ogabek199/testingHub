@@ -75,7 +75,7 @@ export function Header() {
             ))}
           </nav>
 
-          {/* Right Controls: Auth, Lang, Theme */}
+          {/* Right Controls: CTA, Lang, Theme */}
           <div className="hidden md:flex items-center gap-2 xl:gap-2.5 shrink-0">
             {/* CTA Button matching screenshot */}
             <Link
@@ -85,7 +85,7 @@ export function Header() {
               {t("nav.navConsult")}
             </Link>
 
-            {/* Segmented 3-Language Switcher (UZ | RU | EN) matching screenshot */}
+            {/* Segmented 3-Language Switcher (UZ | RU | EN) */}
             <div className="ios-segmented shrink-0">
               {(["uz", "ru", "en"] as Language[]).map((lang) => (
                 <button
@@ -102,7 +102,7 @@ export function Header() {
               ))}
             </div>
 
-            {/* Theme Toggle Button matching screenshot */}
+            {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
               aria-label="Toggle Theme"

@@ -24,11 +24,14 @@ import {
   Rocket
 } from "lucide-react";
 
+import { useCurrency, Currency, UZS_PER_USD } from "@/lib/currency";
+
 interface ServiceItem {
   id: string;
   nameKey: string;
   descKey: string;
-  basePriceUZS: number;
+  /** Base prices in UZS (so'm) for [basic, standard, premium] tiers */
+  pricesUZS: [number, number, number];
   baseDays: number;
   icon: any;
 }
@@ -38,7 +41,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "website",
     nameKey: "calculator.serviceWebsite",
     descKey: "calculator.serviceWebsiteDesc",
-    basePriceUZS: 1500000,
+    pricesUZS: [500_000, 700_000, 900_000],
     baseDays: 3,
     icon: Globe,
   },
@@ -46,7 +49,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "bot",
     nameKey: "calculator.serviceBot",
     descKey: "calculator.serviceBotDesc",
-    basePriceUZS: 900000,
+    pricesUZS: [200_000, 300_000, 400_000],
     baseDays: 2,
     icon: Bot,
   },
@@ -54,7 +57,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "mobile",
     nameKey: "calculator.serviceMobile",
     descKey: "calculator.serviceMobileDesc",
-    basePriceUZS: 2500000,
+    pricesUZS: [800_000, 1_200_000, 1_500_000],
     baseDays: 4,
     icon: Smartphone,
   },
@@ -62,7 +65,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "crm",
     nameKey: "calculator.serviceCRM",
     descKey: "calculator.serviceCRMDesc",
-    basePriceUZS: 3000000,
+    pricesUZS: [1_000_000, 1_300_000, 1_500_000],
     baseDays: 5,
     icon: Database,
   },
@@ -70,7 +73,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "automation",
     nameKey: "calculator.serviceAutomation",
     descKey: "calculator.serviceAutomationDesc",
-    basePriceUZS: 3200000,
+    pricesUZS: [1_500_000, 1_800_000, 2_000_000],
     baseDays: 5,
     icon: Cpu,
   },
@@ -106,6 +109,7 @@ const formatUzbekPhone = (value: string) => {
 export function QACalculator() {
   const { t } = useTranslation();
   const { toast, success: toastSuccess, error: toastError, warning: toastWarning } = useToast();
+  const { currency, setCurrency, format: formatCurrency } = useCurrency();
 
   // Selections
   const [selectedServices, setSelectedServices] = useState<string[]>(["website"]);
@@ -169,31 +173,30 @@ export function QACalculator() {
         isStartup: false,
         minDays: 0,
         maxDays: 0,
-        priceUSD: 0,
       };
     }
 
-    let baseTotal = 0;
+    // Tier index: basic=0, standard=1, advanced=2
+    const tierIdx = packageTier === "basic" ? 0 : packageTier === "advanced" ? 2 : 1;
+
+    let baseTotalUZS = 0;
     let baseDaysTotal = 0;
 
     selectedServices.forEach((sId) => {
       const s = SERVICES_LIST.find((srv) => srv.id === sId);
       if (s) {
-        baseTotal += s.basePriceUZS;
+        baseTotalUZS += s.pricesUZS[tierIdx];
         baseDaysTotal += s.baseDays;
       }
     });
 
-    // Multi-service combo discount (if user picks 2 or more, give 10-15% bundle efficiency)
+    // Multi-service combo discount (5% per extra service, max 20%)
     if (selectedServices.length > 1) {
-      baseTotal = baseTotal * (1 - (selectedServices.length - 1) * 0.05);
+      baseTotalUZS = baseTotalUZS * (1 - Math.min((selectedServices.length - 1) * 0.05, 0.2));
     }
 
     // Size coefficient: small (0.8x), medium (1.0x), large (1.35x)
     const sizeCoeff = projectSize === "small" ? 0.8 : projectSize === "medium" ? 1.0 : 1.35;
-
-    // Package tier coefficient: basic (0.85x), standard (1.0x), advanced (1.3x)
-    const packageCoeff = packageTier === "basic" ? 0.85 : packageTier === "standard" ? 1.0 : 1.3;
 
     // Urgency coefficient: normal (1.0x), express (1.2x), urgent (1.4x)
     const urgencyCoeff = urgency === "normal" ? 1.0 : urgency === "express" ? 1.2 : 1.4;
@@ -207,24 +210,29 @@ export function QACalculator() {
     // 20% discount for Start-up / MVP projects
     const startupMultiplier = isStartup ? 0.8 : 1.0;
 
-    const baseCalculated = baseTotal * sizeCoeff * packageCoeff * urgencyCoeff * stateCoeff * monthlyMultiplier;
-    const calculatedBase = baseCalculated * startupMultiplier;
-    
-    // Smooth rounding to nearest 50,000 UZS
-    const originalMinPriceUZS = Math.max(750000, Math.round((baseCalculated * 0.92) / 50000) * 50000);
-    const originalMaxPriceUZS = Math.max(950000, Math.round((baseCalculated * 1.12) / 50000) * 50000);
+    const baseCalculatedUZS = baseTotalUZS * sizeCoeff * urgencyCoeff * stateCoeff * monthlyMultiplier;
+    const calculatedUZS = baseCalculatedUZS * startupMultiplier;
 
-    const minPriceUZS = Math.max(600000, Math.round((calculatedBase * 0.92) / 50000) * 50000);
-    const maxPriceUZS = Math.max(750000, Math.round((calculatedBase * 1.12) / 50000) * 50000);
+    // Round to clean increments of 100,000 so'm (e.g. 500k -> 500k-600k, 700k -> 700k-800k)
+    const roundTo100k = (v: number) => Math.max(100_000, Math.round(v / 100_000) * 100_000);
+
+    const originalMinPriceUZS = roundTo100k(baseCalculatedUZS);
+    const originalDelta = Math.max(100_000, Math.round((originalMinPriceUZS * 0.2) / 100_000) * 100_000);
+    const originalMaxPriceUZS = originalMinPriceUZS + originalDelta;
+
+    const minPriceUZS = roundTo100k(calculatedUZS);
+    const delta = Math.max(100_000, Math.round((minPriceUZS * 0.2) / 100_000) * 100_000);
+    const maxPriceUZS = minPriceUZS + delta;
 
     const savingsUZS = isStartup ? originalMinPriceUZS - minPriceUZS : 0;
 
     // Realistic days calculation
-    const calculatedDays = Math.round(baseDaysTotal * (sizeCoeff * 0.8) * (urgency === "express" ? 0.75 : urgency === "urgent" ? 0.5 : 1.0));
+    const calculatedDays = Math.round(
+      baseDaysTotal * (sizeCoeff * 0.8) *
+      (urgency === "express" ? 0.75 : urgency === "urgent" ? 0.5 : 1.0)
+    );
     const minDays = Math.max(1, Math.round(calculatedDays * 0.8));
     const maxDays = Math.max(2, Math.round(calculatedDays * 1.2));
-
-    const priceUSD = Math.round(minPriceUZS / 12850);
 
     return {
       isValid: true,
@@ -236,7 +244,6 @@ export function QACalculator() {
       isStartup,
       minDays,
       maxDays,
-      priceUSD,
     };
   }, [selectedServices, projectState, projectSize, packageTier, urgency, supportType, isStartup]);
 
@@ -292,7 +299,9 @@ export function QACalculator() {
       })
       .join(", ");
 
-    const priceText = `${formatNumber(calculation.minPriceUZS)} – ${formatNumber(calculation.maxPriceUZS)} UZS (~$${formatNumber(calculation.priceUSD)})${isStartup ? " [Start-up -20% chegirma qo'llandi]" : ""}`;
+    const minUSD = Math.max(5, Math.ceil((calculation.minPriceUZS / UZS_PER_USD) / 5) * 5);
+    const maxUSD = Math.max(5, Math.ceil((calculation.maxPriceUZS / UZS_PER_USD) / 5) * 5);
+    const priceText = `${formatNumber(calculation.minPriceUZS)} – ${formatNumber(calculation.maxPriceUZS)} so'm (~$${minUSD} – $${maxUSD} USD)${isStartup ? " [Start-up -20% chegirma qo'llandi]" : ""}`;
     const durationText = `${calculation.minDays} – ${calculation.maxDays} ish kuni`;
 
     // Secure server-side Telegram dispatch via /api/lead
@@ -374,12 +383,31 @@ export function QACalculator() {
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">1</span>
                   {t("calculator.step1")}
                 </h3>
-                {selectedServices.length === 0 && (
-                  <span className="text-xs font-medium text-red-500 flex items-center gap-1">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    Kamida 1 ta
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {selectedServices.length === 0 && (
+                    <span className="text-xs font-medium text-red-500 flex items-center gap-1">
+                      <AlertCircle className="h-3.5 w-3.5" />
+                      Kamida 1 ta
+                    </span>
+                  )}
+                  {/* Currency Toggle */}
+                  <div className="flex items-center rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.03] p-0.5 shrink-0">
+                    {(["UZS", "USD"] as Currency[]).map((cur) => (
+                      <button
+                        key={cur}
+                        type="button"
+                        onClick={() => setCurrency(cur)}
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                          currency === cur
+                            ? "bg-primary text-white shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {cur}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -701,19 +729,24 @@ export function QACalculator() {
 
                     {isStartup && (
                       <span className="text-xs line-through text-muted-foreground/70 font-semibold block mt-1.5">
-                        {formatNumber(calculation.originalMinPriceUZS)} – {formatNumber(calculation.originalMaxPriceUZS)} {t("calculator.currencyUnit")}
+                        {formatCurrency(calculation.originalMinPriceUZS)} – {formatCurrency(calculation.originalMaxPriceUZS)}
                       </span>
                     )}
 
                     <p className={`text-2xl md:text-3xl font-black text-primary ${isStartup ? "mt-0.5" : "mt-1"}`}>
-                      {formatNumber(calculation.minPriceUZS)} – {formatNumber(calculation.maxPriceUZS)} {t("calculator.currencyUnit")}
+                      {formatCurrency(calculation.minPriceUZS)} – {formatCurrency(calculation.maxPriceUZS)}
                     </p>
 
                     <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-                      <span>{t("calculator.approxPrefix")} ~${formatNumber(calculation.priceUSD)} USD</span>
+                      <span>
+                        {currency === "UZS"
+                          ? `≈ $${(Math.max(5, Math.ceil((calculation.minPriceUZS / UZS_PER_USD) / 5) * 5)).toLocaleString("en-US")} – $${(Math.max(5, Math.ceil((calculation.maxPriceUZS / UZS_PER_USD) / 5) * 5)).toLocaleString("en-US")}`
+                          : `≈ ${calculation.minPriceUZS.toLocaleString("ru-RU")} – ${calculation.maxPriceUZS.toLocaleString("ru-RU")} so'm`
+                        }
+                      </span>
                       {isStartup && calculation.savingsUZS > 0 && (
                         <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                          {t("calculator.savingsText")} ~{formatNumber(calculation.savingsUZS)} {t("calculator.currencyUnit")}
+                          {t("calculator.savingsText")} ~{formatCurrency(calculation.savingsUZS)}
                         </span>
                       )}
                     </div>
@@ -913,9 +946,8 @@ export function QACalculator() {
                     <div className="flex justify-between text-muted-foreground">
                       <span>{t("calculator.estimateTitle")}:</span>
                       <span className="font-bold text-foreground">
-                        {formatNumber(calculation.minPriceUZS)} – {formatNumber(calculation.maxPriceUZS)} {t("calculator.currencyUnit")}
+                        {formatCurrency(calculation.minPriceUZS)} – {formatCurrency(calculation.maxPriceUZS)}
                       </span>
-
                     </div>
                     {isStartup && (
                       <div className="flex justify-between text-coral-600 dark:text-coral-400 font-semibold">

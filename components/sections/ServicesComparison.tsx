@@ -3,10 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { useCurrency } from "@/lib/currency";
 import { Check, ArrowRight, ShieldCheck, Clock, Layers } from "lucide-react";
 
 export function ServicesComparison() {
   const { t } = useTranslation();
+  const { format: formatCurrency } = useCurrency();
 
   const features = [
     "services.feature1",
@@ -53,7 +55,7 @@ export function ServicesComparison() {
               <div className="my-6 pb-6 border-b border-black/[0.06] dark:border-white/[0.06]">
                 <span className="text-xs text-muted-foreground block">{t("services.startingFrom")}</span>
                 <span className="text-3xl font-black text-foreground mt-0.5 block">
-                  {t("services.oneTimePrice")}
+                  {formatCurrency(500_000)}
                 </span>
                 <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5 text-primary" />
@@ -99,7 +101,7 @@ export function ServicesComparison() {
               <div className="my-6 pb-6 border-b border-black/[0.06] dark:border-white/[0.06]">
                 <span className="text-xs text-muted-foreground block">{t("services.subscriptionPrice")}</span>
                 <span className="text-3xl font-black text-primary mt-0.5 block">
-                  {t("services.monthlyPrice")}
+                  {formatCurrency(1_200_000)} / oy
                 </span>
                 <span className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
