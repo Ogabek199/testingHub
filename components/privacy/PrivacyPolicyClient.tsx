@@ -21,7 +21,7 @@ export function PrivacyPolicyClient() {
         </Link>
 
         {/* Header Card */}
-        <div className="ios-card p-8 md:p-12 mb-8 bg-gradient-to-b from-white to-cream-100/50 dark:from-[#18181C] dark:to-[#121215]">
+        <div className="ios-card p-8 md:p-12 mb-8 bg-gradient-to-b from-white to-cream-100/50 dark:from-[#1a213b] dark:to-[#15192e]">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
             <ShieldCheck className="h-4 w-4" />
             <span>{t("privacy.badge")}</span>

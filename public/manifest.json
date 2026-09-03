@@ -1,12 +1,12 @@
 {
-  "name": "QA.TestingHub — Professional QA Testing Platform",
+  "name": "TestingHub — Global Testing Community",
   "short_name": "TestingHub",
-  "description": "Professional QA va dasturiy ta'minot sinov xizmati. O'zbekistonning #1 QA testing platformasi.",
+  "description": "Professional QA va dasturiy ta'minot sinov xizmati. Global Testing Community.",
   "start_url": "https://testinghub.uz/",
   "scope": "https://testinghub.uz/",
   "display": "standalone",
-  "background_color": "#09090C",
-  "theme_color": "#FF6B47",
+  "background_color": "#15192e",
+  "theme_color": "#10e883",
   "orientation": "portrait-primary",
   "lang": "uz",
   "icons": [

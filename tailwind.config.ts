@@ -19,30 +19,50 @@ const config: Config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          50: "#fff1f0",
-          100: "#ffdfdc",
-          200: "#ffc4be",
-          300: "#ff9d93",
-          400: "#f86b5d",
-          500: "#d9463d", // Signature coral/terracotta from screenshot
-          600: "#c7362d",
-          700: "#a62a22",
-          800: "#89261f",
-          900: "#72241f",
-          950: "#3d1310",
+          50: "#edfff6",
+          100: "#d3fde7",
+          200: "#abf8d2",
+          300: "#70f1b5",
+          400: "#31df93",
+          500: "#10e883", // Signature vibrant green from logo
+          600: "#05b865",
+          700: "#069052",
+          800: "#0b7143",
+          900: "#0b5d38",
+          950: "#01351e",
+        },
+        brand: {
+          navy: "#1c275d", // Light mode navy from logo
+          green: "#17ff91", // Logo neon green
+          dark: "#15192e", // Dark mode background from screenshot 2
+          ice: "#c0e1ff", // Dark mode light bracket icy blue
+        },
+        navy: {
+          50: "#f3f6fc",
+          100: "#e5ecf8",
+          200: "#cfddf3",
+          300: "#abc6eb",
+          400: "#7ea8e0",
+          500: "#5c8cd3",
+          600: "#4470c1",
+          700: "#3759a8",
+          800: "#304b89",
+          900: "#1c275d", // Logo Navy
+          950: "#15192e", // Dark mode midnight navy
         },
         coral: {
-          50: "#fff5f4",
-          100: "#ffe8e6",
-          200: "#ffd5d1",
-          300: "#ffb5ad",
-          400: "#fa8477",
-          500: "#d9463d",
-          600: "#c8362d",
-          700: "#a72922",
-          800: "#8a2620",
-          900: "#732520",
-          950: "#3d1310",
+          // Aliased to vibrant green to ensure complete brand consistency across legacy classes
+          50: "#edfff6",
+          100: "#d3fde7",
+          200: "#abf8d2",
+          300: "#70f1b5",
+          400: "#31df93",
+          500: "#10e883",
+          600: "#05b865",
+          700: "#069052",
+          800: "#0b7143",
+          900: "#0b5d38",
+          950: "#01351e",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -69,17 +89,17 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         cream: {
-          50: "#fdfcfa",
-          100: "#faf8f5",
-          200: "#f4f0e8",
-          300: "#eae2d5",
-          400: "#d8ccb8",
+          50: "#ffffff",
+          100: "#f8fafd",
+          200: "#f1f5fa",
+          300: "#e4ecf6",
+          400: "#ccd8ea",
         },
         darkbg: {
-          DEFAULT: "#0e0e11",
-          card: "#18181c",
-          surface: "#1f1f25",
-          border: "#2b2b34",
+          DEFAULT: "#15192e",
+          card: "#1b213b",
+          surface: "#1f2644",
+          border: "#283256",
         }
       },
       fontFamily: {
@@ -95,10 +115,12 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        ios: "0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03)",
-        "ios-lg": "0 12px 36px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04)",
-        "coral-glow": "0 8px 24px -4px rgba(217, 70, 61, 0.35)",
-        "coral-lg": "0 14px 36px -6px rgba(217, 70, 61, 0.45)",
+        ios: "0 4px 20px -2px rgba(28, 39, 93, 0.05), 0 2px 6px -1px rgba(28, 39, 93, 0.03)",
+        "ios-lg": "0 12px 36px -4px rgba(28, 39, 93, 0.08), 0 4px 12px -2px rgba(28, 39, 93, 0.04)",
+        "coral-glow": "0 8px 24px -4px rgba(23, 255, 145, 0.35)",
+        "coral-lg": "0 14px 36px -6px rgba(23, 255, 145, 0.45)",
+        "brand-glow": "0 8px 24px -4px rgba(23, 255, 145, 0.35)",
+        "brand-lg": "0 14px 36px -6px rgba(23, 255, 145, 0.45)",
       },
       animation: {
         "fade-in": "fadeIn 0.4s ease-out",

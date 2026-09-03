@@ -679,7 +679,7 @@ export function QACalculator() {
 
           {/* Sticky Calculation Result Card */}
           <div className="lg:col-span-5 sticky top-24">
-            <div className="ios-card p-6 md:p-8 bg-gradient-to-b from-white to-cream-100/60 dark:from-[#18181C] dark:to-[#121215] border-coral-500/30 dark:border-coral-500/20 shadow-ios-lg">
+            <div className="ios-card p-6 md:p-8 bg-gradient-to-b from-white to-cream-100/60 dark:from-[#1a213b] dark:to-[#15192e] border-primary/30 dark:border-primary/20 shadow-ios-lg">
               <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] dark:border-white/[0.06]">
                 <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" />

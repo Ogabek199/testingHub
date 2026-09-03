@@ -34,11 +34,11 @@ export function OrganizationJsonLd() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      url: "https://t.me/Javohiir",
+      url: "https://t.me/hiroako",
       availableLanguage: ["uz", "ru", "en"],
     },
     sameAs: [
-      "https://t.me/Javohiir",
+      "https://t.me/hiroako",
       "https://github.com/Ogabek199/testingHub"
     ],
     areaServed: {

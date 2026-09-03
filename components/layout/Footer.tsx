@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import { ShieldCheck, Heart } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 export function Footer() {
   const pathname = usePathname();
@@ -15,18 +16,13 @@ export function Footer() {
   }
 
   return (
-    <footer className="border-t border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#09090C] py-12 transition-colors">
+    <footer className="border-t border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#11162a] py-12 transition-colors">
       <div className="container-max section-padding">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-black/[0.06] dark:border-white/[0.06]">
           {/* Logo & Tagline */}
           <div className="md:col-span-2 space-y-3">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-full border border-black/20 dark:border-white/20 flex items-center justify-center font-bold text-xs text-foreground">
-                QA
-              </div>
-              <span className="text-base font-bold tracking-tight text-foreground font-serif">
-                QA.<span className="text-primary font-sans">TestingHub</span>
-              </span>
+            <Link href="/" className="inline-block transition-opacity hover:opacity-90">
+              <Logo height={32} />
             </Link>
             <p className="text-xs text-muted-foreground max-w-sm leading-relaxed">
               {t("footer.tagline")}
@@ -78,8 +74,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="https://t.me/Javohiir" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                  Telegram (@Javohiir)
+                <a href="https://t.me/hiroako" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  Telegram
                 </a>
               </li>
             </ul>

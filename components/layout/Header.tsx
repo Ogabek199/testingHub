@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation, Language } from "@/lib/i18n";
 import { Menu, X, Sun, Moon } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 export function Header() {
   const pathname = usePathname();
@@ -50,16 +51,9 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full ios-glass border-b border-black/[0.06] dark:border-white/[0.08] transition-colors">
       <div className="container-max section-padding">
         <div className="flex h-16 items-center justify-between gap-4">
-          {/* Brand Logo matching screenshot style */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0">
-            <div className="h-8 w-8 rounded-full border border-black/15 dark:border-white/20 flex items-center justify-center font-bold text-xs text-foreground group-hover:border-primary transition-colors">
-              QA
-            </div>
-            <div className="flex items-center gap-0.5">
-              <span className="text-lg font-bold tracking-tight text-foreground font-serif">
-                QA.<span className="text-primary font-sans">TestingHub</span>
-              </span>
-            </div>
+          {/* Brand Logo matching new official design */}
+          <Link href="/" className="flex items-center group shrink-0 transition-opacity hover:opacity-90">
+            <Logo height={34} />
           </Link>
 
           {/* Desktop Nav Links */}
@@ -92,8 +86,8 @@ export function Header() {
                   key={lang}
                   onClick={() => setLanguage(lang)}
                   className={`ios-segmented-btn uppercase ${language === lang
-                      ? "ios-segmented-btn-active"
-                      : "ios-segmented-btn-inactive"
+                    ? "ios-segmented-btn-active"
+                    : "ios-segmented-btn-inactive"
                     }`}
                 >
                   {lang}
@@ -124,8 +118,8 @@ export function Header() {
                   key={lang}
                   onClick={() => setLanguage(lang)}
                   className={`px-2 py-1 rounded-md text-[11px] font-bold uppercase ${language === lang
-                      ? "bg-white dark:bg-[#25252A] text-foreground shadow-xs"
-                      : "text-muted-foreground"
+                    ? "bg-white dark:bg-[#25252A] text-foreground shadow-xs"
+                    : "text-muted-foreground"
                     }`}
                 >
                   {lang}
@@ -135,6 +129,7 @@ export function Header() {
 
             {/* Theme Toggle Button */}
             <button
+
               onClick={toggleTheme}
               aria-label="Toggle Theme"
               className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 flex items-center justify-center text-foreground"

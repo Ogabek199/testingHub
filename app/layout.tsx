@@ -13,6 +13,7 @@ import {
   SoftwareApplicationJsonLd,
   ProfessionalServiceJsonLd,
 } from "@/components/seo/JsonLd";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 
 const SITE_URL = "https://testinghub.uz";
 const SITE_NAME = "QA.TestingHub";
@@ -24,8 +25,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAFAF8" },
-    { media: "(prefers-color-scheme: dark)", color: "#09090C" },
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)", color: "#15192e" },
   ],
 };
 
@@ -202,7 +203,7 @@ export default function RootLayout({
         <SoftwareApplicationJsonLd />
         <ProfessionalServiceJsonLd />
       </head>
-      <body className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-coral-500/20 selection:text-coral-900 dark:selection:text-coral-200">
+      <body className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-primary/25 selection:text-foreground">
         {/* Dark mode init — must run before paint */}
         <Script
           id="theme-init"
@@ -215,6 +216,7 @@ export default function RootLayout({
           <CurrencyProvider>
             <AuthProvider>
               <ToastProvider>
+                <SplashScreen />
                 <div className="relative flex min-h-screen flex-col">
                   <Header />
                   <main className="flex-1">{children}</main>

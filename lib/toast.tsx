@@ -102,13 +102,13 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   const getStyles = (type: ToastType) => {
     switch (type) {
       case "success":
-        return "border-emerald-500/30 bg-white/95 dark:bg-[#18181C]/95 shadow-emerald-500/10";
+        return "border-emerald-500/30 bg-white/95 dark:bg-[#1a213b]/95 shadow-emerald-500/10";
       case "error":
-        return "border-coral-500/40 bg-white/95 dark:bg-[#18181C]/95 shadow-coral-500/10 ring-1 ring-coral-500/20";
+        return "border-rose-500/40 bg-white/95 dark:bg-[#1a213b]/95 shadow-rose-500/10 ring-1 ring-rose-500/20";
       case "warning":
-        return "border-amber-500/40 bg-white/95 dark:bg-[#18181C]/95 shadow-amber-500/10";
+        return "border-amber-500/40 bg-white/95 dark:bg-[#1a213b]/95 shadow-amber-500/10";
       case "info":
-        return "border-blue-500/30 bg-white/95 dark:bg-[#18181C]/95 shadow-blue-500/10";
+        return "border-blue-500/30 bg-white/95 dark:bg-[#1a213b]/95 shadow-blue-500/10";
     }
   };
 

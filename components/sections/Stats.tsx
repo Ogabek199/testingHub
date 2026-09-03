@@ -23,7 +23,7 @@ const stats = [
 
 export function Stats() {
   return (
-    <section className="py-16 md:py-24 border-y border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#0B0B0E]">
+    <section className="py-16 md:py-24 border-y border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#11162a]">
       <div className="container-max section-padding">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {stats.map((stat, i) => (

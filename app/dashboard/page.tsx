@@ -398,7 +398,7 @@ export default function DashboardPage() {
                 {t("dashboard.helpDesc")}
               </p>
               <a
-                href="https://t.me/Javohiir"
+                href="https://t.me/hiroako"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2 px-3 rounded-xl bg-primary text-white text-xs font-bold text-center block shadow-coral-glow hover:bg-primary/90 transition-colors"

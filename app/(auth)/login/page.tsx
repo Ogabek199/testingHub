@@ -7,6 +7,7 @@ import { useTranslation } from "@/lib/i18n";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/lib/toast";
 import { LogIn, AlertCircle, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Logo } from "@/components/ui/Logo";
 
 function LoginForm() {
   const { t } = useTranslation();
@@ -67,8 +68,8 @@ function LoginForm() {
 
       {/* Brand Header */}
       <div className="text-center mb-6">
-        <div className="h-12 w-12 rounded-2xl bg-coral-50 dark:bg-coral-950/60 text-primary flex items-center justify-center mx-auto mb-3 font-serif font-bold text-lg">
-          QA
+        <div className="flex justify-center mb-4">
+          <Logo height={38} />
         </div>
         <h1 className="text-2xl font-bold text-foreground">
           {t("auth.loginTitle")}

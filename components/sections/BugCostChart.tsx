@@ -79,9 +79,9 @@ export function BugCostChart() {
       titleKey: "bugCost.prodStage",
       descKey: "bugCost.prodDesc",
       icon: AlertTriangle,
-      color: "from-coral-500 to-red-600",
-      textColor: "text-coral-600 dark:text-coral-400",
-      bgColor: "bg-coral-50 dark:bg-coral-950/40 border-coral-200 dark:border-coral-800/40",
+      color: "from-rose-500 to-red-600",
+      textColor: "text-rose-600 dark:text-rose-400",
+      bgColor: "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/40",
       height: "h-64 md:h-80",
       riskKey: "bugCost.riskCritical",
       timeKey: "bugCost.timeProd",
@@ -99,11 +99,11 @@ export function BugCostChart() {
   const currentStage = stages[selectedStage];
 
   return (
-    <section id="bug-cost" className="py-16 md:py-24 bg-cream-100/60 dark:bg-[#0B0B0E] border-y border-black/[0.04] dark:border-white/[0.04]">
+    <section id="bug-cost" className="py-16 md:py-24 bg-cream-100/60 dark:bg-[#11162a] border-y border-black/[0.04] dark:border-white/[0.04]">
       <div className="container-max section-padding">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-coral-50 dark:bg-coral-950/60 border border-coral-200/80 dark:border-coral-800/50 text-coral-600 dark:text-coral-400 text-xs font-semibold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold uppercase tracking-wider mb-4">
             <TrendingUp className="h-3.5 w-3.5" />
             <span>{t("bugCost.badge")}</span>
           </div>
@@ -271,12 +271,12 @@ export function BugCostChart() {
             </div>
 
             {/* Total Savings Card */}
-            <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-coral-500/10 via-amber-500/10 to-emerald-500/10 border border-coral-500/30 flex items-center justify-between">
+            <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-primary/10 border border-primary/30 flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {t("bugCost.savings")}
+                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
+                  {t("bugCost.potentialSavings")}
                 </span>
-                <p className="text-2xl md:text-3xl font-black text-coral-600 dark:text-coral-400 mt-0.5">
+                <p className="text-2xl md:text-3xl font-black text-primary mt-0.5">
                   +${formatNumber(netSavings)} USD
                 </p>
               </div>

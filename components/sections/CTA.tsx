@@ -11,13 +11,13 @@ export function CTA() {
   return (
     <section className="py-16 md:py-24 bg-background">
       <div className="container-max section-padding">
-        <div className="ios-card p-8 md:p-14 bg-gradient-to-br from-primary via-coral-600 to-coral-700 text-white shadow-coral-lg text-center relative overflow-hidden">
+        <div className="ios-card p-8 md:p-14 bg-gradient-to-br from-[#1c275d] via-[#15192e] to-[#0e1326] border border-primary/30 text-white shadow-brand-lg text-center relative overflow-hidden">
           {/* Subtle background circles */}
-          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-white/10 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-black/10 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-96 h-96 bg-primary/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-xs font-semibold uppercase tracking-wider mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary text-xs font-semibold uppercase tracking-wider mb-6">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{t("cta.badge")}</span>
             </div>
@@ -33,14 +33,14 @@ export function CTA() {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <Link
                 href="/#calculator"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-white/95 text-coral-600 font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-brand-glow flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
               >
                 <span>{t("cta.btnCalc")}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
 
               <a
-                href="https://t.me/Javohiir"
+                href="https://t.me/hiroako"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 transition-all"

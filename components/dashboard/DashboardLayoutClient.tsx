@@ -13,6 +13,7 @@ import {
   Sun,
   Moon
 } from "lucide-react";
+import { LogoIcon } from "@/components/ui/Logo";
 
 export function DashboardLayoutClient({
   children,
@@ -82,19 +83,18 @@ export function DashboardLayoutClient({
   }
 
   return (
-    <div className="min-h-screen bg-cream-100/40 dark:bg-[#0A0A0D] flex flex-col">
+    <div className="min-h-screen bg-cream-100/40 dark:bg-[#11162a] flex flex-col">
       {/* Single Clean Top Dashboard Nav Bar */}
       <header className="sticky top-0 z-40 w-full ios-glass border-b border-black/[0.06] dark:border-white/[0.08]">
         <div className="container-max section-padding">
           <div className="flex h-16 items-center justify-between gap-3">
             {/* Brand */}
             <div className="flex items-center gap-3">
-              <Link href="/" className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full border border-black/15 dark:border-white/20 flex items-center justify-center font-bold text-xs text-foreground">
-                  QA
-                </div>
-                <span className="text-base font-bold text-foreground font-serif">
-                  QA.<span className="text-primary font-sans">Dashboard</span>
+              <Link href="/" className="flex items-center gap-2.5 transition-opacity hover:opacity-90">
+                <LogoIcon size={28} />
+                <span className="text-base font-bold text-foreground tracking-tight">
+                  Testing<span className="text-primary">Hub</span>
+                  <span className="ml-1.5 text-[11px] font-semibold text-muted-foreground">Dashboard</span>
                 </span>
               </Link>
               <span className="hidden md:inline-flex text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">

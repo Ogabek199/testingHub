@@ -21,7 +21,7 @@ export function ServicesComparison() {
   ];
 
   return (
-    <section id="services" className="py-16 md:py-24 bg-cream-100/60 dark:bg-[#0B0B0E] border-t border-black/[0.04] dark:border-white/[0.04]">
+    <section id="services" className="py-16 md:py-24 bg-cream-100/60 dark:bg-[#11162a] border-t border-black/[0.04] dark:border-white/[0.04]">
       <div className="container-max section-padding">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-14">
