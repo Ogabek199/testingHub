@@ -7,6 +7,12 @@ import { I18nProvider } from "@/lib/i18n";
 import { CurrencyProvider } from "@/lib/currency";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/lib/toast";
+import {
+  OrganizationJsonLd,
+  WebSiteJsonLd,
+  SoftwareApplicationJsonLd,
+  ProfessionalServiceJsonLd,
+} from "@/components/seo/JsonLd";
 
 const SITE_URL = "https://testinghub.uz";
 const SITE_NAME = "QA.TestingHub";
@@ -24,12 +30,15 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+
   // ===== ASOSIY META =====
   title: {
     default: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
     template: "%s | QA.TestingHub",
   },
   description: SITE_DESCRIPTION,
+  applicationName: "TestingHub",
   keywords: [
     "qa testing",
     "software testing",
@@ -37,25 +46,38 @@ export const metadata: Metadata = {
     "qa academy",
     "uzbekistan testing",
     "istqb",
+    "istqb uzbekistan",
     "dasturiy ta'minot sinovi",
     "QA xizmati",
     "bug topish",
     "test avtomatizatsiya",
+    "playwright test",
+    "cypress test",
+    "selenium testing",
     "manual testing",
     "api testing",
     "security testing",
+    "penetration testing uzbekistan",
     "performance testing",
+    "load testing",
     "mobile app testing",
+    "ios app testing",
+    "android app testing",
     "O'zbekiston QA",
+    "Toshkent QA xizmati",
     "dasturchi xizmati",
-    "sayt test",
-    "ilova test",
+    "sayt test qilish",
+    "ilova test qilish",
     "regression testing",
     "smoke testing",
     "qa tester",
     "qa muhandis",
     "testinghub",
+    "testinghub uz",
     "testing hub uzbekistan",
+    "тестирование по узбекистан",
+    "qa услуги ташкент",
+    "автоматизация тестирования",
   ],
   authors: [{ name: "TestingHub QA Team", url: SITE_URL }],
   creator: "TestingHub",
@@ -82,15 +104,22 @@ export const metadata: Metadata = {
     alternateLocale: ["ru_RU", "en_US"],
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "QA.TestingHub — Professional QA Testing Platform",
+    title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: `${SITE_URL}/favicon.svg`,
-        width: 512,
-        height: 512,
-        alt: "QA.TestingHub Logo",
-        type: "image/svg+xml",
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "QA.TestingHub — Professional QA Testing Platform",
+        type: "image/png",
+      },
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "QA.TestingHub — Professional QA Testing Platform",
+        type: "image/png",
       },
     ],
   },
@@ -98,10 +127,11 @@ export const metadata: Metadata = {
   // ===== TWITTER CARD =====
   twitter: {
     card: "summary_large_image",
-    title: "QA.TestingHub — Professional QA Testing Platform",
+    title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
     description: SITE_DESCRIPTION,
-    images: [`${SITE_URL}/favicon.svg`],
+    images: ["/opengraph-image", "/og-image.png"],
     creator: "@testinghub",
+    site: "@testinghub",
   },
 
   // ===== ROBOTS =====
@@ -119,11 +149,13 @@ export const metadata: Metadata = {
   },
 
   // ===== VERIFICATION =====
-  // Google Search Console, Yandex Webmaster - kerak bo'lganda qo'shing
-  // verification: {
-  //   google: "your-google-verification-code",
-  //   yandex: "your-yandex-verification-code",
-  // },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || "",
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || "",
+    other: {
+      "msvalidate.01": process.env.NEXT_PUBLIC_BING_VERIFICATION || "",
+    },
+  },
 
   // ===== ALTERNATE LANGUAGES =====
   alternates: {
@@ -132,6 +164,7 @@ export const metadata: Metadata = {
       "uz-UZ": SITE_URL,
       "ru-RU": `${SITE_URL}?lang=ru`,
       "en-US": `${SITE_URL}?lang=en`,
+      "x-default": SITE_URL,
     },
   },
 
@@ -162,6 +195,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* DNS prefetch for Telegram (CTA links) */}
         <link rel="dns-prefetch" href="https://t.me" />
+
+        {/* Global Structured Data (JSON-LD) for SEO */}
+        <OrganizationJsonLd />
+        <WebSiteJsonLd />
+        <SoftwareApplicationJsonLd />
+        <ProfessionalServiceJsonLd />
       </head>
       <body className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-coral-500/20 selection:text-coral-900 dark:selection:text-coral-200">
         {/* Dark mode init — must run before paint */}

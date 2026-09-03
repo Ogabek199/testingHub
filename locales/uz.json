@@ -373,7 +373,6 @@
     "createdLabel": "Yaratildi",
     "authorLabel": "Muallif"
   },
-
   "privacy": {
     "badge": "Xavfsizlik & Maxfiylik",
     "title": "Maxfiylik Siyosati",
@@ -450,4 +449,3 @@
     "testRunDesc": "Yangi test jarayoni boshlandi!"
   }
 }
-

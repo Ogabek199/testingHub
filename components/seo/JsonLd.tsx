@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 interface JsonLdProps {
@@ -15,26 +13,34 @@ export function JsonLd({ data }: JsonLdProps) {
   );
 }
 
-// ===== Structured Data Generators =====
+// ===== Structured Data Generators (Schema.org) =====
 
 export function OrganizationJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "QA.TestingHub",
-    alternateName: "TestingHub",
+    alternateName: ["TestingHub", "TestingHub Uzbekistan", "QA TestingHub"],
     url: "https://testinghub.uz",
-    logo: "https://testinghub.uz/favicon.svg",
+    logo: "https://testinghub.uz/og-image.png",
     description:
-      "Professional QA va dasturiy ta'minot sinov xizmati. O'zbekistonning #1 QA testing platformasi.",
+      "Professional QA va dasturiy ta'minot sinov xizmati. Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. O'zbekistonning #1 QA testing platformasi.",
     foundingDate: "2024",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "UZ",
+      addressLocality: "Tashkent",
+    },
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
       url: "https://t.me/Javohiir",
       availableLanguage: ["uz", "ru", "en"],
     },
-    sameAs: ["https://t.me/Javohiir"],
+    sameAs: [
+      "https://t.me/Javohiir",
+      "https://github.com/Ogabek199/testingHub"
+    ],
     areaServed: {
       "@type": "Country",
       name: "Uzbekistan",
@@ -72,21 +78,22 @@ export function SoftwareApplicationJsonLd() {
     "@type": "SoftwareApplication",
     name: "QA.TestingHub",
     applicationCategory: "DeveloperApplication",
-    operatingSystem: "Web",
+    operatingSystem: "Web, iOS, Android, Cloud",
     url: "https://testinghub.uz",
     description:
-      "Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. Professional QA testing xizmati.",
+      "Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. Professional QA testing va test avtomatlashtirish xizmati.",
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "UZS",
-      description: "Bepul konsultatsiya mavjud",
+      description: "Bepul QA audit va konsultatsiya",
     },
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.9",
       ratingCount: "28",
       bestRating: "5",
+      worstRating: "1",
     },
   };
 
@@ -98,10 +105,19 @@ export function ProfessionalServiceJsonLd() {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: "QA.TestingHub",
+    image: "https://testinghub.uz/og-image.png",
     url: "https://testinghub.uz",
-    description:
-      "Professional QA va dasturiy ta'minot sinov xizmati. Dasturingizni bug'lardan tozalang.",
+    telephone: "+998",
     priceRange: "$$",
+    currenciesAccepted: "UZS, USD",
+    paymentAccepted: "Cash, Credit Card, Bank Transfer, Payme, Click",
+    address: {
+      "@type": "PostalAddress",
+      addressCountry: "UZ",
+      addressLocality: "Tashkent",
+    },
+    description:
+      "Professional QA va dasturiy ta'minot sinov xizmati. Sayt va ilovalarni ISTQB standartlari asosida bug'lardan tozalash.",
     areaServed: {
       "@type": "Country",
       name: "Uzbekistan",
@@ -115,6 +131,8 @@ export function ProfessionalServiceJsonLd() {
       "Security Testing",
       "Performance Testing",
       "Mobile App Testing",
+      "Load Testing",
+      "Regression Testing"
     ],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
@@ -126,7 +144,7 @@ export function ProfessionalServiceJsonLd() {
             "@type": "Service",
             name: "Manual Testing",
             description:
-              "Har bir ekranni, tugmani va funksiyani qo'lda tekshirish",
+              "Har bir ekranni, tugmani va biznes-mantik funksiyasini qo'lda tekshirish",
           },
         },
         {
@@ -135,7 +153,7 @@ export function ProfessionalServiceJsonLd() {
             "@type": "Service",
             name: "Test Automation",
             description:
-              "Avtomatik testlar yozish va CI/CD integratsiyasi",
+              "Playwright, Cypress, Selenium orqali avtomatik testlar yozish va CI/CD integratsiyasi",
           },
         },
         {
@@ -144,16 +162,25 @@ export function ProfessionalServiceJsonLd() {
             "@type": "Service",
             name: "API Testing",
             description:
-              "REST va GraphQL API endpoint'larni sinash",
+              "REST, GraphQL va gRPC API endpoint'larni Postman va avtomatlashtirilgan testlar bilan sinash",
           },
         },
         {
           "@type": "Offer",
           itemOffered: {
             "@type": "Service",
-            name: "Security Testing",
+            name: "Security & Penetration Testing",
             description:
-              "Xavfsizlik zaifliklarini aniqlash va penetration testing",
+              "OWASP Top-10 xavfsizlik zaifliklarini aniqlash va penetration testing",
+          },
+        },
+        {
+          "@type": "Offer",
+          itemOffered: {
+            "@type": "Service",
+            name: "Performance & Load Testing",
+            description:
+              "JMeter va k6 vositalari orqali minglab bir vaqtning o'zidagi foydalanuvchilar yuklamasiga chidamlilikni sinash",
           },
         },
       ],
@@ -170,42 +197,42 @@ export function FAQJsonLd() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "QA testing nima?",
+        name: "QA testing nima va nima uchun kerak?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "QA (Quality Assurance) testing — dasturiy ta'minotning sifatini ta'minlash jarayoni. Bug'larni topish, funksionallikni tekshirish va foydalanuvchi tajribasini yaxshilash uchun qo'llaniladi.",
+          text: "QA (Quality Assurance) testing — dasturiy ta'minotning sifatini, xavfsizligini va barqarorligini ta'minlash jarayoni. Dasturdagi kritik xatolarni real foydalanuvchilarga yetib bormasdan oldin topish va kompaniyani millionlab so'mlik zarardan hamda obro' yo'qotishdan asrash uchun qo'llaniladi.",
         },
       },
       {
         "@type": "Question",
-        name: "QA testing xizmati qancha turadi?",
+        name: "QA testing xizmati narxi qanday hisoblanadi?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Narx loyihaning hajmi va murakkabligiga bog'liq. Bepul konsultatsiya olish uchun saytdagi kalkulyatordan foydalaning yoki Telegram orqali bog'laning.",
+          text: "Narx loyihaning hajmi, arxitekturasi va test turlariga (manual, avtomatlashtirish, yuklama testi) bog'liq. Saytimizdagi interaktiv kalkulyatordan foydalanib o'z loyihangiz narxini hisoblashingiz yoki Telegram orqali mutaxassisimizdan bepul konsultatsiya olishingiz mumkin.",
         },
       },
       {
         "@type": "Question",
-        name: "Qanday turdagi testlar o'tkaziladi?",
+        name: "TestingHub jamoasi qanday test turlarini o'tkazadi?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Biz Manual testing, Test automation, API testing, Security testing, Performance testing, Mobile app testing va boshqa ko'plab test turlarini o'tkazamiz.",
+          text: "Biz Manual testing, Test Automation (Playwright, Cypress), API testing, Security/Penetration testing, Performance/Load testing, Mobile App testing (iOS & Android) va Regression testing xizmatlarini taqdim etamiz.",
         },
       },
       {
         "@type": "Question",
-        name: "ISTQB sertifikati nima?",
+        name: "TestingHub mutaxassislari ISTQB standartlariga amal qiladimi?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "ISTQB (International Software Testing Qualifications Board) — xalqaro QA sertifikat organi. Bizning jamoamiz ISTQB standartlariga mos keladigan testing metodologiyalaridan foydalanadi.",
+          text: "Ha, bizning barcha QA muhandislarimiz xalqaro ISTQB (International Software Testing Qualifications Board) standartlari va eng ilg'or test metodologiyalari asosida faoliyat yuritadi.",
         },
       },
       {
         "@type": "Question",
-        name: "QA xizmati qancha vaqt oladi?",
+        name: "QA tekshiruvi qancha vaqt davom etadi?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Oddiy loyihalar 3-5 kun, o'rta darajali loyihalar 1-2 hafta, murakkab loyihalar 2-4 hafta vaqt olishi mumkin. Batafsil ma'lumot uchun bepul konsultatsiya oling.",
+          text: "Kichik loyihalar va auditlar 3-5 ish kuni, o'rta hajmdagi tizimlar 1-2 hafta, yirik korporativ loyihalar esa 2-4 hafta vaqt oladi. Shuningdek doimiy 24/7 monitoring xizmatimiz ham mavjud.",
         },
       },
     ],

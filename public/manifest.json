@@ -1,10 +1,11 @@
 {
   "name": "QA.TestingHub — Professional QA Testing Platform",
   "short_name": "TestingHub",
-  "description": "Professional QA va dasturiy ta'minot sinov xizmati. O'zbekistonning #1 QA platformasi.",
-  "start_url": "/",
+  "description": "Professional QA va dasturiy ta'minot sinov xizmati. O'zbekistonning #1 QA testing platformasi.",
+  "start_url": "https://testinghub.uz/",
+  "scope": "https://testinghub.uz/",
   "display": "standalone",
-  "background_color": "#FAFAF8",
+  "background_color": "#09090C",
   "theme_color": "#FF6B47",
   "orientation": "portrait-primary",
   "lang": "uz",
@@ -13,7 +14,13 @@
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["business", "productivity", "developer tools"]

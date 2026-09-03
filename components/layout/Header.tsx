@@ -28,13 +28,13 @@ export function Header() {
       setIsDark(false);
       try {
         localStorage.setItem("testinghub_theme", "light");
-      } catch {}
+      } catch { }
     } else {
       document.documentElement.classList.add("dark");
       setIsDark(true);
       try {
         localStorage.setItem("testinghub_theme", "dark");
-      } catch {}
+      } catch { }
     }
   };
 
@@ -91,11 +91,10 @@ export function Header() {
                 <button
                   key={lang}
                   onClick={() => setLanguage(lang)}
-                  className={`ios-segmented-btn uppercase ${
-                    language === lang
+                  className={`ios-segmented-btn uppercase ${language === lang
                       ? "ios-segmented-btn-active"
                       : "ios-segmented-btn-inactive"
-                  }`}
+                    }`}
                 >
                   {lang}
                 </button>
@@ -124,11 +123,10 @@ export function Header() {
                 <button
                   key={lang}
                   onClick={() => setLanguage(lang)}
-                  className={`px-2 py-1 rounded-md text-[11px] font-bold uppercase ${
-                    language === lang
+                  className={`px-2 py-1 rounded-md text-[11px] font-bold uppercase ${language === lang
                       ? "bg-white dark:bg-[#25252A] text-foreground shadow-xs"
                       : "text-muted-foreground"
-                  }`}
+                    }`}
                 >
                   {lang}
                 </button>
@@ -138,6 +136,7 @@ export function Header() {
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
+              aria-label="Toggle Theme"
               className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 flex items-center justify-center text-foreground"
             >
               {isDark ? (
@@ -150,6 +149,7 @@ export function Header() {
             {/* Menu button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile navigation menu"
               className="p-1.5 rounded-lg text-foreground hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
