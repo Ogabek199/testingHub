@@ -34,7 +34,7 @@ export function BugCostChart() {
       color: "from-emerald-500 to-teal-600",
       textColor: "text-emerald-600 dark:text-emerald-400",
       bgColor: "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/40",
-      height: "h-24 md:h-32",
+      height: "h-20 sm:h-28 md:h-32",
       riskKey: "bugCost.riskVeryLow",
       timeKey: "bugCost.timeDev",
       badgeVariant: "success"
@@ -50,7 +50,7 @@ export function BugCostChart() {
       color: "from-blue-500 to-indigo-600",
       textColor: "text-indigo-600 dark:text-indigo-400",
       bgColor: "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-800/40",
-      height: "h-36 md:h-48",
+      height: "h-28 sm:h-36 md:h-48",
       riskKey: "bugCost.riskMedium",
       timeKey: "bugCost.timeTest",
       badgeVariant: "info"
@@ -66,7 +66,7 @@ export function BugCostChart() {
       color: "from-amber-500 to-orange-600",
       textColor: "text-amber-600 dark:text-amber-400",
       bgColor: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/40",
-      height: "h-48 md:h-64",
+      height: "h-40 sm:h-48 md:h-64",
       riskKey: "bugCost.riskHigh",
       timeKey: "bugCost.timeUat",
       badgeVariant: "warning"
@@ -82,7 +82,7 @@ export function BugCostChart() {
       color: "from-rose-500 to-red-600",
       textColor: "text-rose-600 dark:text-rose-400",
       bgColor: "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/40",
-      height: "h-64 md:h-80",
+      height: "h-56 sm:h-64 md:h-80",
       riskKey: "bugCost.riskCritical",
       timeKey: "bugCost.timeProd",
       badgeVariant: "danger"
@@ -116,8 +116,8 @@ export function BugCostChart() {
         </div>
 
         {/* 4-Stage Growing Visual Chart */}
-        <div className="ios-card p-6 md:p-8 mb-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 items-end pt-8 pb-4">
+        <div className="ios-card p-3.5 sm:p-6 md:p-8 mb-10">
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-3 md:gap-4 items-end pt-4 sm:pt-8 pb-3 sm:pb-4">
             {stages.map((stage) => {
               const Icon = stage.icon;
               const isSelected = selectedStage === stage.id;
@@ -131,18 +131,18 @@ export function BugCostChart() {
                   }`}
                 >
                   {/* Top Price Tag */}
-                  <div className="mb-2 text-center">
-                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-muted-foreground">
+                  <div className="mb-1.5 sm:mb-2 text-center w-full">
+                    <span className="text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/10 text-muted-foreground whitespace-nowrap">
                       {stage.multiplier}
                     </span>
-                    <p className={`text-xl md:text-2xl font-black mt-1 ${stage.textColor}`}>
+                    <p className={`text-xs sm:text-lg md:text-2xl font-black mt-0.5 sm:mt-1 truncate ${stage.textColor}`}>
                       {stage.cost}
                     </p>
                   </div>
 
                   {/* Exponential Height Pillar */}
                   <div
-                    className={`w-full rounded-2xl p-4 flex flex-col justify-between transition-all duration-300 ${
+                    className={`w-full rounded-xl sm:rounded-2xl p-2 sm:p-3.5 md:p-4 flex flex-col justify-between transition-all duration-300 ${
                       stage.height
                     } ${
                       isSelected
@@ -150,14 +150,14 @@ export function BugCostChart() {
                         : "bg-black/[0.04] dark:bg-white/[0.06] hover:bg-black/[0.08] dark:hover:bg-white/[0.1] text-foreground"
                     }`}
                   >
-                    <div className="flex justify-between items-center">
-                      <Icon className={`h-5 w-5 ${isSelected ? "text-white" : stage.textColor}`} />
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md ${isSelected ? "bg-white/20 text-white" : "bg-black/5 dark:bg-white/10"}`}>
+                    <div className="flex justify-between items-center w-full">
+                      <Icon className={`h-3.5 w-3.5 sm:h-5 sm:w-5 shrink-0 ${isSelected ? "text-white" : stage.textColor}`} />
+                      <span className={`text-[9px] sm:text-[11px] font-bold px-1 sm:px-2 py-0.5 rounded ${isSelected ? "bg-white/20 text-white" : "bg-black/5 dark:bg-white/10"}`}>
                         #{stage.id + 1}
                       </span>
                     </div>
                     <div>
-                      <h4 className={`text-xs md:text-sm font-bold leading-tight ${isSelected ? "text-white" : "text-foreground"}`}>
+                      <h4 className={`text-[10px] sm:text-xs md:text-sm font-bold leading-tight line-clamp-2 ${isSelected ? "text-white" : "text-foreground"}`}>
                         {t(stage.titleKey)}
                       </h4>
                     </div>
@@ -168,35 +168,35 @@ export function BugCostChart() {
           </div>
 
           {/* Selected Stage Explanation Box */}
-          <div className={`mt-6 p-5 md:p-6 rounded-2xl border transition-all duration-200 ${currentStage.bgColor}`}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-start gap-3.5">
-                <div className={`p-2.5 rounded-xl bg-white dark:bg-black/30 shadow-sm ${currentStage.textColor}`}>
-                  <currentStage.icon className="h-6 w-6" />
+          <div className={`mt-4 sm:mt-6 p-4 sm:p-5 md:p-6 rounded-2xl border transition-all duration-200 ${currentStage.bgColor}`}>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+              <div className="flex items-start gap-3">
+                <div className={`p-2 sm:p-2.5 rounded-xl bg-white dark:bg-black/30 shadow-sm shrink-0 ${currentStage.textColor}`}>
+                  <currentStage.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <h3 className="text-lg font-bold text-foreground">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-base sm:text-lg font-bold text-foreground">
                       {t(currentStage.titleKey)}
                     </h3>
-                    <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-black/30 ${currentStage.textColor}`}>
+                    <span className={`text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-black/30 ${currentStage.textColor}`}>
                       {t("bugCost.estCostLabel")}: {currentStage.cost}
                     </span>
                   </div>
-                  <p className="text-sm text-foreground/80 mt-1.5 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-foreground/80 mt-1 sm:mt-1.5 leading-relaxed">
                     {t(currentStage.descKey)}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 text-xs shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-black/10 dark:border-white/10">
-                <div className="bg-white dark:bg-black/30 px-3 py-2 rounded-xl">
-                  <span className="text-muted-foreground block">{t("bugCost.timeToFixLabel")}</span>
-                  <span className="font-semibold text-foreground">{t(currentStage.timeKey)}</span>
+              <div className="grid grid-cols-2 gap-2 text-xs shrink-0 pt-3 md:pt-0 border-t md:border-t-0 border-black/10 dark:border-white/10">
+                <div className="bg-white dark:bg-black/30 p-2.5 rounded-xl">
+                  <span className="text-muted-foreground block text-[11px]">{t("bugCost.timeToFixLabel")}</span>
+                  <span className="font-semibold text-foreground text-xs sm:text-sm">{t(currentStage.timeKey)}</span>
                 </div>
-                <div className="bg-white dark:bg-black/30 px-3 py-2 rounded-xl">
-                  <span className="text-muted-foreground block">{t("bugCost.riskLabel")}</span>
-                  <span className="font-semibold text-foreground">{t(currentStage.riskKey)}</span>
+                <div className="bg-white dark:bg-black/30 p-2.5 rounded-xl">
+                  <span className="text-muted-foreground block text-[11px]">{t("bugCost.riskLabel")}</span>
+                  <span className="font-semibold text-foreground text-xs sm:text-sm">{t(currentStage.riskKey)}</span>
                 </div>
               </div>
             </div>
@@ -271,19 +271,19 @@ export function BugCostChart() {
             </div>
 
             {/* Total Savings Card */}
-            <div className="mt-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-primary/10 border border-primary/30 flex items-center justify-between">
+            <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-primary/10 border border-primary/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">
-                  {t("bugCost.potentialSavings")}
+                <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider block">
+                  {t("bugCost.savings")}
                 </span>
-                <p className="text-2xl md:text-3xl font-black text-primary mt-0.5">
+                <p className="text-2xl sm:text-3xl font-black text-primary mt-0.5">
                   +${formatNumber(netSavings)} USD
                 </p>
               </div>
 
               <Link
                 href="/#calculator"
-                className="px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-medium text-xs md:text-sm flex items-center gap-1.5 shadow-coral-glow transition-all"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm shadow-primary/30 transition-all text-center shrink-0"
               >
                 <span>{t("bugCost.btnCalculate")}</span>
                 <ArrowRight className="h-4 w-4" />

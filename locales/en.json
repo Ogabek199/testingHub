@@ -68,6 +68,7 @@
     "withoutQASub": "Assuming 70% of defects reach Production",
     "withQASub": "All defects caught during QA testing",
     "savings": "Estimated Net Savings:",
+    "potentialSavings": "Estimated Net Savings:",
     "btnCalculate": "Calculate now",
     "realWorldTitle": "Real-World Software Disasters",
     "realWorldSub": "Famous real-world disasters caused by lack of QA testing:",

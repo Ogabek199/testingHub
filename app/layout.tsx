@@ -190,7 +190,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uz" suppressHydrationWarning>
-      <head>
+      <head suppressHydrationWarning>
         {/* Preconnect to external resources for faster loading */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -203,13 +203,13 @@ export default function RootLayout({
         <SoftwareApplicationJsonLd />
         <ProfessionalServiceJsonLd />
       </head>
-      <body className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-primary/25 selection:text-foreground">
-        {/* Dark mode init — must run before paint */}
+      <body suppressHydrationWarning className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-primary/25 selection:text-foreground">
+        {/* Dark mode and splash pre-init — must run before paint */}
         <Script
           id="theme-init"
           strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}if(!sessionStorage.getItem("testinghub_tab_seen")){document.documentElement.classList.add("splash-active");}}catch(e){}})();`,
           }}
         />
         <I18nProvider>

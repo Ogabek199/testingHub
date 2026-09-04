@@ -68,6 +68,7 @@
     "withoutQASub": "Productionda 70% xatolar uchrab qolgan holatda",
     "withQASub": "Barcha xatolar QA test bosqichida ushlanganda",
     "savings": "Kutilayotgan sof tejamkorlik:",
+    "potentialSavings": "Kutilayotgan sof tejamkorlik:",
     "btnCalculate": "Hisoblab ko'rish",
     "realWorldTitle": "Haqiqiy tarixdagi falokatlar",
     "realWorldSub": "Tarixdagi eng mashhur QA yetishmovchiligi natijasida ko'rilgan zararlar:",

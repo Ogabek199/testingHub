@@ -389,27 +389,27 @@ export function QACalculator() {
           {/* Main Questions Form */}
           <div className="lg:col-span-7 space-y-8">
             {/* Step 1: Select Services */}
-            <div className="ios-card p-6 md:p-7">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-foreground flex items-center gap-2">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-xs font-bold">1</span>
-                  {t("calculator.step1")}
+            <div className="ios-card p-4 sm:p-6 md:p-7">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <h3 className="text-sm sm:text-base font-bold text-foreground flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white text-xs font-bold shrink-0">1</span>
+                  <span>{t("calculator.step1")}</span>
                 </h3>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
                   {selectedServices.length === 0 && (
                     <span className="text-xs font-medium text-red-500 flex items-center gap-1">
-                      <AlertCircle className="h-3.5 w-3.5" />
-                      Kamida 1 ta
+                      <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                      <span>Kamida 1 ta</span>
                     </span>
                   )}
                   {/* Currency Toggle */}
-                  <div className="flex items-center rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.03] p-0.5 shrink-0">
+                  <div className="flex items-center rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.03] p-0.5 shrink-0 ml-auto sm:ml-0">
                     {(["UZS", "USD"] as Currency[]).map((cur) => (
                       <button
                         key={cur}
                         type="button"
                         onClick={() => setCurrency(cur)}
-                        className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                           currency === cur
                             ? "bg-primary text-white shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
@@ -422,7 +422,7 @@ export function QACalculator() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                 {SERVICES_LIST.map((srv) => {
                   const Icon = srv.icon;
                   const isChecked = selectedServices.includes(srv.id);
@@ -431,7 +431,7 @@ export function QACalculator() {
                     <div
                       key={srv.id}
                       onClick={() => toggleService(srv.id)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-start gap-3.5 ${
+                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
                         isChecked
                           ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
                           : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
@@ -466,9 +466,9 @@ export function QACalculator() {
             </div>
 
             {/* Step 2 & 3: Project State & Scope */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {/* Step 2: State */}
-              <div className="ios-card p-6">
+              <div className="ios-card p-4 sm:p-6">
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 dark:bg-white/10 text-foreground text-xs font-bold">2</span>
                   {t("calculator.step2")}
@@ -497,7 +497,7 @@ export function QACalculator() {
               </div>
 
               {/* Step 3: Size */}
-              <div className="ios-card p-6">
+              <div className="ios-card p-4 sm:p-6">
                 <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 dark:bg-white/10 text-foreground text-xs font-bold">3</span>
                   {t("calculator.step3")}
@@ -574,7 +574,7 @@ export function QACalculator() {
             </div>
 
             {/* Step 4 & 5: Platform & Package Tier */}
-            <div className="ios-card p-6 md:p-7">
+            <div className="ios-card p-4 sm:p-6 md:p-7">
               <h3 className="text-base font-bold text-foreground mb-4 flex items-center gap-2">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/10 dark:bg-white/10 text-foreground text-xs font-bold">4</span>
                 {t("calculator.step5")}
@@ -606,7 +606,7 @@ export function QACalculator() {
                     <div
                       key={pkg.id}
                       onClick={() => setPackageTier(pkg.id)}
-                      className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
                         isSelected
                           ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
                           : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
@@ -630,7 +630,7 @@ export function QACalculator() {
             </div>
 
             {/* Step 6: Urgency & Support Type */}
-            <div className="ios-card p-6">
+            <div className="ios-card p-4 sm:p-6">
               <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-black/10 dark:bg-white/10 text-foreground text-xs font-bold">5</span>
                 {t("calculator.step6")}
@@ -691,7 +691,7 @@ export function QACalculator() {
 
           {/* Sticky Calculation Result Card */}
           <div className="lg:col-span-5 sticky top-24">
-            <div className="ios-card p-6 md:p-8 bg-gradient-to-b from-white to-cream-100/60 dark:from-[#1a213b] dark:to-[#15192e] border-primary/30 dark:border-primary/20 shadow-ios-lg">
+            <div className="ios-card p-4 sm:p-6 md:p-8 bg-gradient-to-b from-white to-cream-100/60 dark:from-[#1a213b] dark:to-[#15192e] border-primary/30 dark:border-primary/20 shadow-ios-lg">
               <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] dark:border-white/[0.06]">
                 <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                   <Zap className="h-5 w-5 text-primary" />

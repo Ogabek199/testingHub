@@ -70,6 +70,10 @@
     @apply bg-background text-foreground antialiased selection:bg-primary/25 selection:text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  html.splash-active body {
+    overflow: hidden !important;
+  }
 }
 
 @layer components {
