@@ -79,12 +79,15 @@ export async function POST(request: Request) {
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
     if (!botToken || !chatId) {
-      console.warn("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set in environment variables.");
-      return NextResponse.json({
-        success: true,
-        leadId,
-        warning: "Telegram bot credentials not configured",
-      });
+      console.error("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set in environment variables.");
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Telegram bot konfiguratsiyasi serverda topilmadi (TELEGRAM_BOT_TOKEN yoki TELEGRAM_CHAT_ID sozlanmagan).",
+          leadId,
+        },
+        { status: 500 }
+      );
     }
 
     const safeLeadId = escapeHtml(leadId || "QA-" + Date.now());

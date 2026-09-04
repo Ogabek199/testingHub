@@ -328,10 +328,19 @@ export function QACalculator() {
 
       const resData = await res.json().catch(() => null);
       if (!res.ok || resData?.success === false) {
-        console.warn("API Lead response warning:", resData?.error || "Lead API returned error");
+        setIsSubmitting(false);
+        const errMsg = resData?.error || "Xatolik yuz berdi. Iltimos, qayta urinib ko'ring yoki to'g'ridan-to'g'ri Telegram orqali yozing.";
+        toastError(errMsg, "Xatolik");
+        return;
       }
     } catch (err) {
       console.error("API Lead dispatch error:", err);
+      setIsSubmitting(false);
+      toastError(
+        "Tarmoqda xatolik yuz berdi. Iltimos, internet aloqasini tekshiring yoki Telegram orqali bog'laning.",
+        "Xatolik"
+      );
+      return;
     }
 
     // Save lead locally to display on dashboard
