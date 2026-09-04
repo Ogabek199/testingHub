@@ -125,19 +125,39 @@ ${safeComment ? `\n📝 <b>Loyiha haqida:</b>\n<i>${safeComment}</i>\n` : ""}━
 📅 <b>Vaqt:</b> ${escapeHtml(nowFormatted)}`;
 
     try {
-      const tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      let targetChatId: string | number = chatId;
+      let tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          chat_id: chatId,
+          chat_id: targetChatId,
           text: messageText,
           parse_mode: "HTML",
         }),
       });
 
-      const tgData = await tgRes.json();
+      let tgData = await tgRes.json();
+
+      // Automatically handle Telegram group -> supergroup migration
+      if (!tgData.ok && tgData.parameters?.migrate_to_chat_id) {
+        console.warn(`Telegram group migrated to supergroup: ${tgData.parameters.migrate_to_chat_id}. Retrying...`);
+        targetChatId = tgData.parameters.migrate_to_chat_id;
+        tgRes = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            chat_id: targetChatId,
+            text: messageText,
+            parse_mode: "HTML",
+          }),
+        });
+        tgData = await tgRes.json();
+      }
+
       if (!tgData.ok) {
         console.error("Telegram API Error response:", tgData);
         return NextResponse.json(

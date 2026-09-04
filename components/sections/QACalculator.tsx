@@ -329,16 +329,19 @@ export function QACalculator() {
       const resData = await res.json().catch(() => null);
       if (!res.ok || resData?.success === false) {
         setIsSubmitting(false);
-        const errMsg = resData?.error || "Xatolik yuz berdi. Iltimos, qayta urinib ko'ring yoki to'g'ridan-to'g'ri Telegram orqali yozing.";
-        toastError(errMsg, "Xatolik");
+        const errMsg =
+          res.status === 429
+            ? t("toasts.leadRateLimitDesc")
+            : t("toasts.leadErrorDesc");
+        toastError(errMsg, t("toasts.leadErrorTitle"));
         return;
       }
     } catch (err) {
       console.error("API Lead dispatch error:", err);
       setIsSubmitting(false);
       toastError(
-        "Tarmoqda xatolik yuz berdi. Iltimos, internet aloqasini tekshiring yoki Telegram orqali bog'laning.",
-        "Xatolik"
+        t("toasts.leadNetworkErrorDesc"),
+        t("toasts.leadErrorTitle")
       );
       return;
     }
