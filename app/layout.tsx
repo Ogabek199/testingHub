@@ -161,10 +161,17 @@ export default function RootLayout({
         {/* DNS prefetch for Telegram (CTA links) */}
         <link rel="dns-prefetch" href="https://t.me" />
 
+        {/* Critical inline styles for splash screen and instant anti-FOUC */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `html.splash-active body{overflow:hidden!important}html.splash-active #app-content{opacity:0!important;pointer-events:none!important}html:not(.splash-active) #testinghub-splash{display:none!important}#testinghub-splash{position:fixed;inset:0;z-index:9999}`,
+          }}
+        />
+
         {/* Synchronous theme and splash pre-init — executes before render/paint to eliminate FOUC */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");var sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var isDark=t==="dark"||((!t||t==="system")&&sysDark);if(isDark){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}if(!sessionStorage.getItem("testinghub_tab_seen")){document.documentElement.classList.add("splash-active");}}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");var sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var isDark=t==="dark"||((!t||t==="system")&&sysDark);if(isDark){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}var seenSession=sessionStorage.getItem("testinghub_tab_seen");var lastSeen=localStorage.getItem("testinghub_splash_last");var isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;var prefersReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;var isSeen=seenSession||(isStandalone&&lastSeen&&(Date.now()-parseInt(lastSeen,10)<8*3600*1000));if(!isSeen&&!prefersReducedMotion){document.documentElement.classList.add("splash-active");setTimeout(function(){document.documentElement.classList.remove("splash-active");},3500);}}catch(e){}})();`,
           }}
         />
 
@@ -181,7 +188,7 @@ export default function RootLayout({
               <AuthProvider>
                 <ToastProvider>
                   <SplashScreen />
-                  <div className="relative flex min-h-screen flex-col">
+                  <div id="app-content" className="relative flex min-h-screen flex-col">
                     <Header />
                     <main className="flex-1">{children}</main>
                     <Footer />

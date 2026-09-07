@@ -71,8 +71,22 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
+  /* Splash Screen Anti-FOUC & Smooth Reveal */
   html.splash-active body {
     overflow: hidden !important;
+  }
+
+  html.splash-active #app-content {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+
+  #app-content {
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html:not(.splash-active) #testinghub-splash {
+    display: none !important;
   }
 }
 
