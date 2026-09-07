@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, "..");
 
-// Load environment variables from .env.local
+// 1. Load environment variables from .env.local
 const envPath = path.join(rootDir, ".env.local");
 if (fs.existsSync(envPath)) {
   const lines = fs.readFileSync(envPath, "utf-8").split("\n");
@@ -29,80 +29,239 @@ if (!token) {
   process.exit(1);
 }
 
+const defaultChatId = process.env.TELEGRAM_CHAT_ID;
 const TELEGRAM_API = `https://api.telegram.org/bot${token}`;
-
-// Helper: load visitor storage
 const dataFile = path.join(rootDir, "data", "visitor_devices.json");
 
-function getStats() {
+const UZBEK_MONTHS = [
+  "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+  "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"
+];
+
+function getTashkentDate(d = new Date()) {
+  return d.toLocaleDateString("en-CA", { timeZone: "Asia/Tashkent" }); // YYYY-MM-DD
+}
+
+function getTashkentYearMonth(d = new Date()) {
+  return getTashkentDate(d).slice(0, 7); // YYYY-MM
+}
+
+function formatMonthName(yearMonth) {
+  const [year, monthStr] = yearMonth.split("-");
+  const monthIdx = parseInt(monthStr, 10) - 1;
+  const name = UZBEK_MONTHS[monthIdx] || monthStr;
+  return `${year}-yil ${name} oyi`;
+}
+
+// Safely read visitor data
+function loadData() {
   try {
     if (!fs.existsSync(dataFile)) {
       return {
-        totalDevices: 0,
-        todayDevices: 0,
-        past7DaysDevices: 0,
-        deviceTypes: { mobile: 0, desktop: 0, tablet: 0 },
-        osBreakdown: {},
-        browserBreakdown: {},
-        lastUpdated: new Date().toLocaleString("uz-UZ", { timeZone: "Asia/Tashkent" }),
+        devices: {},
+        totalVisits: 0,
+        dailyVisits: {},
+        monthlyVisits: {},
+        monthlyUniqueDevices: {},
+        monthlyReportsSent: {},
       };
     }
-    const data = JSON.parse(fs.readFileSync(dataFile, "utf-8"));
-    const devices = Object.values(data.devices || {});
-
-    const now = new Date();
-    const todayStr = now.toLocaleDateString("en-CA", { timeZone: "Asia/Tashkent" });
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    let todayCount = 0;
-    let past7DaysCount = 0;
-    const deviceTypes = { mobile: 0, desktop: 0, tablet: 0 };
-    const osBreakdown = {};
-    const browserBreakdown = {};
-
-    for (const d of devices) {
-      if (d.deviceType === "mobile") deviceTypes.mobile++;
-      else if (d.deviceType === "tablet") deviceTypes.tablet++;
-      else deviceTypes.desktop++;
-
-      const osKey = d.os || "Boshqa";
-      osBreakdown[osKey] = (osBreakdown[osKey] || 0) + 1;
-
-      const brKey = d.browser || "Boshqa";
-      browserBreakdown[brKey] = (browserBreakdown[brKey] || 0) + 1;
-
-      const lastSeen = new Date(d.lastSeen);
-      const lastSeenStr = lastSeen.toLocaleDateString("en-CA", { timeZone: "Asia/Tashkent" });
-      if (lastSeenStr === todayStr) todayCount++;
-      if (lastSeen >= sevenDaysAgo) past7DaysCount++;
+    const raw = fs.readFileSync(dataFile, "utf-8");
+    const parsed = JSON.parse(raw);
+    if (!parsed.devices) parsed.devices = {};
+    if (!parsed.dailyVisits) parsed.dailyVisits = {};
+    if (!parsed.monthlyVisits) parsed.monthlyVisits = {};
+    if (!parsed.monthlyUniqueDevices) parsed.monthlyUniqueDevices = {};
+    if (!parsed.monthlyReportsSent) parsed.monthlyReportsSent = {};
+    if (typeof parsed.totalVisits !== "number") {
+      parsed.totalVisits = Object.values(parsed.devices).reduce(
+        (sum, d) => sum + (d.visitCount || 1),
+        0
+      );
     }
-
-    return {
-      totalDevices: devices.length,
-      todayDevices: todayCount,
-      past7DaysDevices: past7DaysCount,
-      deviceTypes,
-      osBreakdown,
-      browserBreakdown,
-      lastUpdated: new Date().toLocaleString("uz-UZ", {
-        timeZone: "Asia/Tashkent",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-  } catch (e) {
-    console.error("Xatolik statistikani o'qishda:", e);
+    return parsed;
+  } catch (err) {
+    console.error("Faylni o'qishda xatolik:", err.message);
     return null;
   }
 }
 
-function formatMessage(stats) {
+// Safely save visitor data (atomic)
+function saveData(data) {
+  try {
+    const temp = `${dataFile}.tmp.${Date.now()}`;
+    fs.writeFileSync(temp, JSON.stringify(data, null, 2), "utf-8");
+    fs.renameSync(temp, dataFile);
+  } catch (err) {
+    console.error("Faylni saqlashda xatolik:", err.message);
+  }
+}
+
+// Real-time live statistics
+function getLiveStats() {
+  const data = loadData();
+  if (!data) return null;
+
+  const devices = Object.values(data.devices || {});
+  const now = new Date();
+  const todayStr = getTashkentDate(now);
+  const currentMonth = getTashkentYearMonth(now);
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  let todayDevices = 0;
+  let past7DaysDevices = 0;
+  const deviceTypes = { mobile: 0, desktop: 0, tablet: 0 };
+  const osBreakdown = {};
+  const browserBreakdown = {};
+
+  for (const d of devices) {
+    if (d.deviceType === "mobile") deviceTypes.mobile++;
+    else if (d.deviceType === "tablet") deviceTypes.tablet++;
+    else deviceTypes.desktop++;
+
+    const osKey = d.os || "Boshqa";
+    osBreakdown[osKey] = (osBreakdown[osKey] || 0) + 1;
+
+    const brKey = d.browser || "Boshqa";
+    browserBreakdown[brKey] = (browserBreakdown[brKey] || 0) + 1;
+
+    const lastSeen = new Date(d.lastSeen);
+    const lastSeenStr = getTashkentDate(lastSeen);
+    if (lastSeenStr === todayStr) todayDevices++;
+    if (lastSeen >= sevenDaysAgo) past7DaysDevices++;
+  }
+
+  const thisMonthUnique = data.monthlyUniqueDevices?.[currentMonth]?.length ||
+    devices.filter(d => getTashkentYearMonth(new Date(d.lastSeen)) === currentMonth).length;
+
+  return {
+    totalDevices: devices.length,
+    totalVisits: data.totalVisits || devices.reduce((sum, d) => sum + (d.visitCount || 1), 0),
+    todayDevices,
+    todayVisits: data.dailyVisits?.[todayStr] || todayDevices,
+    thisMonthDevices: thisMonthUnique,
+    thisMonthVisits: data.monthlyVisits?.[currentMonth] || 0,
+    past7DaysDevices,
+    deviceTypes,
+    osBreakdown,
+    browserBreakdown,
+    lastUpdated: new Date().toLocaleString("uz-UZ", {
+      timeZone: "Asia/Tashkent",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }),
+  };
+}
+
+// Monthly statistics summary
+function getMonthlyStats(targetYearMonth) {
+  const data = loadData();
+  if (!data) return null;
+
+  const now = new Date();
+  let yearMonth = targetYearMonth;
+  if (!yearMonth) {
+    const currentYM = getTashkentYearMonth(now);
+    const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const prevYM = getTashkentYearMonth(prevDate);
+
+    const prevHasActivity = Object.values(data.devices || {}).some(d => {
+      return (
+        getTashkentYearMonth(new Date(d.firstSeen)) === prevYM ||
+        getTashkentYearMonth(new Date(d.lastSeen)) === prevYM
+      );
+    });
+
+    yearMonth = prevHasActivity ? prevYM : currentYM;
+  }
+
+  const monthName = formatMonthName(yearMonth);
+  const totalVisits = data.monthlyVisits?.[yearMonth] || 0;
+
+  const matchingIds = new Set(data.monthlyUniqueDevices?.[yearMonth] || []);
+  const allDevices = Object.values(data.devices || {});
+
+  for (const d of allDevices) {
+    const firstSeenYM = getTashkentYearMonth(new Date(d.firstSeen));
+    const lastSeenYM = getTashkentYearMonth(new Date(d.lastSeen));
+    if (firstSeenYM === yearMonth || lastSeenYM === yearMonth) {
+      matchingIds.add(d.id);
+    }
+  }
+
+  const activeDevices = allDevices.filter(d => matchingIds.has(d.id));
+  const uniqueCount = activeDevices.length > 0 ? activeDevices.length : matchingIds.size;
+
+  const deviceTypes = { mobile: 0, desktop: 0, tablet: 0 };
+  const osBreakdown = {};
+  const browserBreakdown = {};
+
+  for (const d of activeDevices) {
+    if (d.deviceType === "mobile") deviceTypes.mobile++;
+    else if (d.deviceType === "tablet") deviceTypes.tablet++;
+    else deviceTypes.desktop++;
+
+    const osKey = d.os || "Boshqa";
+    osBreakdown[osKey] = (osBreakdown[osKey] || 0) + 1;
+
+    const brKey = d.browser || "Boshqa";
+    browserBreakdown[brKey] = (browserBreakdown[brKey] || 0) + 1;
+  }
+
+  let daysCount = 0;
+  let peakDay = { date: "Mavjud emas", visits: 0 };
+  for (const [dayStr, visits] of Object.entries(data.dailyVisits || {})) {
+    if (dayStr.startsWith(yearMonth)) {
+      daysCount++;
+      if (visits > peakDay.visits) {
+        peakDay = { date: dayStr, visits };
+      }
+    }
+  }
+
+  const effectiveDays = Math.max(daysCount, 1);
+  const averageDailyVisits = Math.round((totalVisits || uniqueCount) / effectiveDays);
+
+  const topOs = Object.entries(osBreakdown)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: uniqueCount > 0 ? ((count / uniqueCount) * 100).toFixed(1) : "0",
+    }));
+
+  const topBrowsers = Object.entries(browserBreakdown)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 4)
+    .map(([name, count]) => ({
+      name,
+      count,
+      percentage: uniqueCount > 0 ? ((count / uniqueCount) * 100).toFixed(1) : "0",
+    }));
+
+  return {
+    yearMonth,
+    monthName,
+    uniqueDevices: uniqueCount,
+    totalVisits: Math.max(totalVisits, uniqueCount),
+    deviceTypes,
+    topOs,
+    topBrowsers,
+    averageDailyVisits,
+    peakDay,
+  };
+}
+
+// Live stats formatting
+function formatLiveMessage(stats) {
   if (!stats) return "⚠️ Hozircha statistika mavjud emas.";
 
   const total = stats.totalDevices;
+  const visits = stats.totalVisits;
   const mob = stats.deviceTypes.mobile;
   const desk = stats.deviceTypes.desktop;
   const tab = stats.deviceTypes.tablet;
@@ -125,9 +284,12 @@ function formatMessage(stats) {
 
   return `📊 <b>testingHub — Sayt Statistikasi</b>
 ━━━━━━━━━━━━━━━━━━━━
-👥 <b>Jami kirgan qurilmalar:</b> <code>${total}</code> ta
-📅 <b>Bugun kirganlar:</b> <code>${stats.todayDevices}</code> ta
-🗓 <b>So'nggi 7 kunda:</b> <code>${stats.past7DaysDevices}</code> ta
+👥 <b>Jami noyob qurilmalar:</b> <code>${total}</code> ta
+👁 <b>Jami sahifa ochilishlari:</b> <code>${visits}</code> ta
+━━━━━━━━━━━━━━━━━━━━
+📅 <b>Bugungi tashriflar:</b> <code>${stats.todayDevices}</code> ta qurilma (${stats.todayVisits} marta)
+🗓 <b>Shu oyda kirganlar:</b> <code>${stats.thisMonthDevices}</code> ta qurilma (${stats.thisMonthVisits} marta)
+📈 <b>So'nggi 7 kunda:</b> <code>${stats.past7DaysDevices}</code> ta qurilma
 
 📱 <b>Qurilma turlari:</b>
 ├ 📱 <b>Mobile:</b> ${mob} ta (${mobPct}%)
@@ -143,9 +305,49 @@ ${topBrowsers}
 🕒 <i>Yangilangan: ${stats.lastUpdated}</i>`;
 }
 
+// Monthly report formatting
+function formatMonthlyMessage(monthly) {
+  if (!monthly) return "⚠️ Oylik hisobot ma'lumotlari topilmadi.";
+
+  const total = monthly.uniqueDevices;
+  const mob = monthly.deviceTypes.mobile;
+  const desk = monthly.deviceTypes.desktop;
+  const tab = monthly.deviceTypes.tablet;
+
+  const mobPct = total > 0 ? ((mob / total) * 100).toFixed(1) : "0.0";
+  const deskPct = total > 0 ? ((desk / total) * 100).toFixed(1) : "0.0";
+  const tabPct = total > 0 ? ((tab / total) * 100).toFixed(1) : "0.0";
+
+  const osList = monthly.topOs.map(o => `├ ${o.name}: <b>${o.count}</b> ta (${o.percentage}%)`).join("\n") || "├ Ma'lumot yo'q";
+  const browserList = monthly.topBrowsers.map(b => `├ ${b.name}: <b>${b.count}</b> ta (${b.percentage}%)`).join("\n") || "├ Ma'lumot yo'q";
+
+  return `🗓 <b>testingHub — Oylik Rasmiy Hisobot</b>
+━━━━━━━━━━━━━━━━━━━━
+📌 <b>Davr:</b> <b>${monthly.monthName}</b> (${monthly.yearMonth})
+
+👥 <b>Oy davomida kirgan noyob qurilmalar:</b> <code>${monthly.uniqueDevices}</code> ta
+👁 <b>Jami tashriflar (sahifa ko'rishlar):</b> <code>${monthly.totalVisits}</code> marta
+⚡️ <b>O'rtacha kunlik tashriflar:</b> ~<code>${monthly.averageDailyVisits}</code> marta
+🔥 <b>Eng faol kun:</b> ${monthly.peakDay.date} (<code>${monthly.peakDay.visits}</code> tashrif)
+
+📱 <b>Foydalanuvchilar qurilmasi:</b>
+├ 📱 <b>Mobile:</b> ${mob} ta (${mobPct}%)
+├ 💻 <b>Desktop:</b> ${desk} ta (${deskPct}%)
+└ 📟 <b>Tablet:</b> ${tab} ta (${tabPct}%)
+
+💻 <b>Top Operatsion tizimlar:</b>
+${osList}
+
+🌐 <b>Top Brauzerlar:</b>
+${browserList}
+━━━━━━━━━━━━━━━━━━━━
+✅ <i>Hisobot har oyning boshida avtomatik ravishda tayyorlanadi va testingHub ma'murlariga yetkaziladi.</i>`;
+}
+
+// Telegram API Helpers
 async function sendMessage(chatId, text, replyMarkup) {
   try {
-    await fetch(`${TELEGRAM_API}/sendMessage`, {
+    const res = await fetch(`${TELEGRAM_API}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -155,8 +357,10 @@ async function sendMessage(chatId, text, replyMarkup) {
         reply_markup: replyMarkup,
       }),
     });
+    return await res.json();
   } catch (err) {
     console.error("Xabar jo'natishda xatolik:", err.message);
+    return null;
   }
 }
 
@@ -193,16 +397,79 @@ async function answerCallback(callbackId, text) {
   }
 }
 
+// Check and auto-send monthly report to TELEGRAM_CHAT_ID once a month
+async function checkAndSendMonthlyReport() {
+  if (!defaultChatId) return;
+
+  const now = new Date();
+  const todayStr = getTashkentDate(now);
+  const dayOfMonth = parseInt(todayStr.split("-")[2], 10);
+
+  // Send report during the first days of new month (day 1-3)
+  const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const targetYearMonth = getTashkentYearMonth(prevDate);
+
+  const data = loadData();
+  if (!data) return;
+
+  if (!data.monthlyReportsSent) data.monthlyReportsSent = {};
+
+  if (!data.monthlyReportsSent[targetYearMonth]) {
+    console.log(`[Auto Monthly Report] ${targetYearMonth} uchun avtomatik oylik hisobot yuborilmoqda...`);
+    const monthlyStats = getMonthlyStats(targetYearMonth);
+    const text = formatMonthlyMessage(monthlyStats);
+
+    const res = await sendMessage(defaultChatId, text, {
+      inline_keyboard: [
+        [
+          { text: "📊 Hozirgi statistika", callback_data: "refresh_stats" },
+          { text: "🗓 Oylik hisobot", callback_data: "monthly_stats" },
+        ],
+      ],
+    });
+
+    if (res && res.ok) {
+      data.monthlyReportsSent[targetYearMonth] = true;
+      saveData(data);
+      console.log(`✅ [Auto Monthly Report] ${targetYearMonth} hisoboti Telegramga muvaffaqiyatli yuborildi!`);
+    }
+  }
+}
+
+// Telegram Update Processing
 async function processUpdate(update) {
   // 1. Callback query
   if (update.callback_query) {
     const cb = update.callback_query;
-    if (cb.data === "refresh_stats" && cb.message) {
+    const chatId = cb.message?.chat?.id;
+    const messageId = cb.message?.message_id;
+
+    if (cb.data === "refresh_stats" && chatId && messageId) {
       await answerCallback(cb.id, "Statistika yangilanmoqda...");
-      const stats = getStats();
-      const text = formatMessage(stats);
-      await editMessage(cb.message.chat.id, cb.message.message_id, text, {
-        inline_keyboard: [[{ text: "🔄 Yangilash", callback_data: "refresh_stats" }]],
+      const stats = getLiveStats();
+      const text = formatLiveMessage(stats);
+      await editMessage(chatId, messageId, text, {
+        inline_keyboard: [
+          [
+            { text: "🔄 Yangilash", callback_data: "refresh_stats" },
+            { text: "🗓 Oylik hisobot", callback_data: "monthly_stats" },
+          ],
+        ],
+      });
+      return;
+    }
+
+    if (cb.data === "monthly_stats" && chatId && messageId) {
+      await answerCallback(cb.id, "Oylik hisobot tayyorlanmoqda...");
+      const monthly = getMonthlyStats();
+      const text = formatMonthlyMessage(monthly);
+      await editMessage(chatId, messageId, text, {
+        inline_keyboard: [
+          [
+            { text: "📊 Hozirgi statistika", callback_data: "refresh_stats" },
+            { text: "🔄 Yangilash", callback_data: "monthly_stats" },
+          ],
+        ],
       });
       return;
     }
@@ -218,34 +485,69 @@ async function processUpdate(update) {
 
   console.log(`[Telegram Update] Chat ${chatId}: "${text}"`);
 
+  // Monthly stats
+  if (
+    lower.startsWith("/monthly") ||
+    lower.startsWith("/month") ||
+    lower === "oylik" ||
+    lower === "oylik hisobot"
+  ) {
+    const monthly = getMonthlyStats();
+    const replyText = formatMonthlyMessage(monthly);
+    await sendMessage(chatId, replyText, {
+      inline_keyboard: [
+        [
+          { text: "📊 Hozirgi statistika", callback_data: "refresh_stats" },
+          { text: "🔄 Yangilash", callback_data: "monthly_stats" },
+        ],
+      ],
+    });
+    return;
+  }
+
+  // Live stats
   if (
     lower.startsWith("/statistics") ||
     lower.startsWith("/stats") ||
     lower === "statistics" ||
     lower === "statistika"
   ) {
-    const stats = getStats();
-    const replyText = formatMessage(stats);
+    const stats = getLiveStats();
+    const replyText = formatLiveMessage(stats);
     await sendMessage(chatId, replyText, {
-      inline_keyboard: [[{ text: "🔄 Yangilash", callback_data: "refresh_stats" }]],
+      inline_keyboard: [
+        [
+          { text: "🔄 Yangilash", callback_data: "refresh_stats" },
+          { text: "🗓 Oylik hisobot", callback_data: "monthly_stats" },
+        ],
+      ],
     });
     return;
   }
 
+  // Help / Start
   if (lower.startsWith("/start") || lower.startsWith("/help")) {
     const welcome = `👋 <b>Assalomu alaykum!</b>
 
 Men <b>testingHub</b> loyihasining monitoring botiman.
 
 📌 <b>Buyruqlar:</b>
-• /statistics — Saytga kirgan barcha qurilmalar soni va hisoboti
+• /statistics — Saytga kirgan barcha qurilmalar va jami sahifa ochilishlari
+• /monthly — O'tgan oy yakunlari va to'liq oylik tahlil
 • /stats — Qisqartirilgan buyruq
 • /help — Yordam
 
-Statistikani ko'rish uchun quyidagi tugmani bosing:`;
+🔔 <i>Bot har oyning 1-sanasida oylik rasmiy hisobotni avtomatik ravishda testingHub guruhiga jo'natadi.</i>
+
+Kerakli bo'limni tanlang:`;
 
     await sendMessage(chatId, welcome, {
-      inline_keyboard: [[{ text: "📊 Statistikani ko'rish", callback_data: "refresh_stats" }]],
+      inline_keyboard: [
+        [
+          { text: "📊 Hozirgi statistika", callback_data: "refresh_stats" },
+          { text: "🗓 Oylik hisobot", callback_data: "monthly_stats" },
+        ],
+      ],
     });
     return;
   }
@@ -256,12 +558,23 @@ let offset = 0;
 
 async function startPolling() {
   console.log("🚀 testingHub Telegram Bot ishga tushdi (@testingHubUzBot)");
-  console.log("📡 Telegramdan yangilanishlar kutilmoqda... (/statistics yoki /stats yuboring)\n");
+  console.log("📡 Telegramdan yangilanishlar kutilmoqda... (/statistics yoki /monthly yuboring)");
+  if (defaultChatId) {
+    console.log(`🔔 Oylik hisobotlar yuboriladigan Chat ID: ${defaultChatId}\n`);
+  }
 
-  // Clear any existing webhook to enable polling
+  // Initial webhook cleanup
   try {
     await fetch(`${TELEGRAM_API}/deleteWebhook?drop_pending_updates=true`);
   } catch {}
+
+  // Check monthly report on start
+  await checkAndSendMonthlyReport();
+
+  // Run periodic monthly check every 30 minutes
+  setInterval(() => {
+    checkAndSendMonthlyReport().catch(e => console.error("Monthly check error:", e.message));
+  }, 30 * 60 * 1000);
 
   while (true) {
     try {

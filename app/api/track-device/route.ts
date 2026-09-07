@@ -39,6 +39,8 @@ export async function POST(request: Request) {
         success: true,
         deviceId: result.deviceId,
         isNew: result.isNew,
+        totalDevices: result.totalDevices,
+        totalVisits: result.totalVisits,
       },
       { headers: corsHeaders }
     );

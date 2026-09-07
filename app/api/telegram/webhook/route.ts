@@ -38,7 +38,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     status: "Telegram webhook endpoint is active",
     botUsername: "testingHubUzBot",
-    supportedCommands: ["/statistics", "/stats", "/help", "/start"],
+    supportedCommands: ["/statistics", "/stats", "/monthly", "/month", "/help", "/start"],
     currentStats: stats,
   });
 }

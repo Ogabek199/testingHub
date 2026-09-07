@@ -1,21 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 const DEVICE_STORAGE_KEY = "testinghub_device_id";
-const SESSION_PING_KEY = "testinghub_device_pinged";
+const LAST_PING_KEY = "testinghub_last_ping_time";
+const PING_COOLDOWN_MS = 15 * 60 * 1000; // 15 minutlik sessiya oralig'i
 
 export function DeviceTracker() {
+  const pingedRef = useRef(false);
+
   useEffect(() => {
-    // Only execute on browser
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || pingedRef.current) return;
+    pingedRef.current = true;
 
     try {
-      // Don't ping repeatedly in the same tab session
-      const alreadyPinged = sessionStorage.getItem(SESSION_PING_KEY);
-      if (alreadyPinged) return;
+      // 1. Get or instantly generate persistent device ID to eliminate race conditions
+      let deviceId = localStorage.getItem(DEVICE_STORAGE_KEY);
+      if (!deviceId || !deviceId.startsWith("dev_")) {
+        deviceId = `dev_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
+        localStorage.setItem(DEVICE_STORAGE_KEY, deviceId);
+      }
 
-      const deviceId = localStorage.getItem(DEVICE_STORAGE_KEY) || undefined;
+      // 2. Prevent spamming visits within cooldown window in the same browser
+      const now = Date.now();
+      const lastPing = parseInt(sessionStorage.getItem(LAST_PING_KEY) || "0", 10);
+      if (now - lastPing < PING_COOLDOWN_MS) {
+        return;
+      }
+
       const screenResolution = `${window.screen?.width || 0}x${window.screen?.height || 0}`;
       const language = navigator.language || "uz";
 
@@ -32,16 +44,18 @@ export function DeviceTracker() {
       })
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.success && data.deviceId) {
-            localStorage.setItem(DEVICE_STORAGE_KEY, data.deviceId);
-            sessionStorage.setItem(SESSION_PING_KEY, "1");
+          if (data && data.success) {
+            sessionStorage.setItem(LAST_PING_KEY, now.toString());
+            if (data.deviceId && data.deviceId !== deviceId) {
+              localStorage.setItem(DEVICE_STORAGE_KEY, data.deviceId);
+            }
           }
         })
         .catch(() => {
-          // Silent catch for ad-blockers or offline mode
+          // Silent catch for offline or blocked requests
         });
     } catch {
-      // Ignore storage errors (private mode, etc.)
+      // Ignore storage errors in private browsing restrictions
     }
   }, []);
 
