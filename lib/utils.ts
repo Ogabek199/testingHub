@@ -11,6 +11,33 @@ export function formatNumber(num: number | string): string {
   return parts.join(".");
 }
 
+export function formatUzbekPhone(value: string): string {
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return "+998 ";
+
+  let cleanDigits = digits;
+  if (cleanDigits.startsWith("998")) {
+    cleanDigits = cleanDigits.substring(3);
+  }
+  cleanDigits = cleanDigits.substring(0, 9);
+
+  let formatted = "+998";
+  if (cleanDigits.length > 0) {
+    formatted += " " + cleanDigits.substring(0, 2);
+  }
+  if (cleanDigits.length >= 3) {
+    formatted += " " + cleanDigits.substring(2, 5);
+  }
+  if (cleanDigits.length >= 6) {
+    formatted += " " + cleanDigits.substring(5, 7);
+  }
+  if (cleanDigits.length >= 8) {
+    formatted += " " + cleanDigits.substring(7, 9);
+  }
+
+  return formatted;
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

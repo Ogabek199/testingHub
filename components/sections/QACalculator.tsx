@@ -42,7 +42,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "website",
     nameKey: "calculator.serviceWebsite",
     descKey: "calculator.serviceWebsiteDesc",
-    pricesUZS: [500_000, 700_000, 900_000],
+    pricesUZS: [700_000, 1_000_000, 1_300_000],
     baseDays: 3,
     icon: Globe,
   },
@@ -58,7 +58,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "mobile",
     nameKey: "calculator.serviceMobile",
     descKey: "calculator.serviceMobileDesc",
-    pricesUZS: [800_000, 1_200_000, 1_500_000],
+    pricesUZS: [1_100_000, 1_600_000, 2_100_000],
     baseDays: 4,
     icon: Smartphone,
   },
@@ -66,7 +66,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "crm",
     nameKey: "calculator.serviceCRM",
     descKey: "calculator.serviceCRMDesc",
-    pricesUZS: [1_000_000, 1_300_000, 1_500_000],
+    pricesUZS: [1_400_000, 1_800_000, 2_200_000],
     baseDays: 5,
     icon: Database,
   },
@@ -74,7 +74,7 @@ const SERVICES_LIST: ServiceItem[] = [
     id: "automation",
     nameKey: "calculator.serviceAutomation",
     descKey: "calculator.serviceAutomationDesc",
-    pricesUZS: [1_500_000, 1_800_000, 2_000_000],
+    pricesUZS: [2_000_000, 2_500_000, 3_000_000],
     baseDays: 5,
     icon: Cpu,
   },
@@ -410,12 +410,6 @@ export function QACalculator() {
                   <span>{t("calculator.step1")}</span>
                 </h3>
                 <div className="flex items-center justify-between sm:justify-end gap-2.5 w-full sm:w-auto">
-                  {selectedServices.length === 0 && (
-                    <span className="text-xs font-medium text-red-500 flex items-center gap-1">
-                      <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                      <span>Kamida 1 ta</span>
-                    </span>
-                  )}
                   {/* Currency Toggle */}
                   <div className="flex items-center rounded-xl border border-black/[0.08] dark:border-white/[0.1] bg-black/[0.02] dark:bg-white/[0.03] p-0.5 shrink-0 ml-auto sm:ml-0">
                     {(["UZS", "USD"] as Currency[]).map((cur) => (

@@ -51,7 +51,8 @@ export function Hero() {
           </Link>
         </div>
 
-        {/* 4 Stats Cards matching screenshot row */}
+        {/* 4 Stats Cards matching screenshot row - Hidden as requested */}
+        {/*
         <div className="mt-16 md:mt-20 pt-10 border-t border-black/[0.06] dark:border-white/[0.06]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             <div className="flex flex-col items-center">
@@ -91,6 +92,7 @@ export function Hero() {
             </div>
           </div>
         </div>
+        */}
       </div>
     </section>
   );
