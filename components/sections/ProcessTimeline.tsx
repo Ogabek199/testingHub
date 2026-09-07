@@ -68,11 +68,11 @@ export function ProcessTimeline() {
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-black text-primary/40 font-mono">
+                    <span className="inline-flex items-center justify-center px-3 py-1 rounded-xl bg-primary/15 dark:bg-primary/25 text-primary dark:text-emerald-400 font-mono text-base font-black tracking-wider">
                       {t(step.numKey)}
                     </span>
-                    <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                      <Icon className="h-4 w-4" />
+                    <div className="h-10 w-10 rounded-xl bg-primary/15 dark:bg-primary/25 text-primary dark:text-emerald-400 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all">
+                      <Icon className="h-5 w-5" />
                     </div>
                   </div>
                   <h3 className="text-sm font-bold text-foreground mb-2">

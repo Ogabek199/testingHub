@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { useCurrency } from "@/lib/currency";
 import { useToast } from "@/lib/toast";
+import { useConsultationModal } from "@/lib/consultation-context";
 import { formatUzbekPhone } from "@/lib/utils";
 import { SITE_URL } from "@/lib/constants";
 import {
@@ -22,6 +23,7 @@ export function ServicesComparison() {
   const { t } = useTranslation();
   const { format: formatCurrency } = useCurrency();
   const { success: toastSuccess, error: toastError } = useToast();
+  const { openConsultationModal } = useConsultationModal();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<"modelA" | "modelB">("modelB");
@@ -62,8 +64,10 @@ export function ServicesComparison() {
 
   const handleOpenModal = (plan: "modelA" | "modelB") => {
     setSelectedPlan(plan);
-    setIsModalOpen(true);
-    setIsSubmitted(false);
+    openConsultationModal({
+      defaultPlan: plan,
+      defaultService: plan === "modelB" ? "automation" : "web",
+    });
   };
 
   const handleSubmitLead = async (e: React.FormEvent) => {
@@ -119,6 +123,8 @@ export function ServicesComparison() {
       price: planPrice,
       duration: selectedPlan === "modelB" ? "Doimiy / Oylik" : "3 – 7 ish kuni",
       honeypot: formData.honeypot,
+      formName: `Tariflar Taqqoslovi (${planTitle})`,
+      source: "Tariflar Taqqoslovi",
     });
 
     try {
@@ -239,14 +245,6 @@ export function ServicesComparison() {
                 ))}
               </ul>
             </div>
-
-            <button
-              type="button"
-              onClick={() => handleOpenModal("modelA")}
-              className="w-full py-3 px-4 rounded-xl bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.1] dark:hover:bg-white/[0.12] text-foreground font-semibold text-xs text-center border border-black/[0.06] dark:border-white/[0.08] transition-colors block cursor-pointer"
-            >
-              {t("services.btnSelect")}
-            </button>
           </div>
 
           {/* Model B: Retainer (Popular) */}

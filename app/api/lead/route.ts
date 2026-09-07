@@ -65,6 +65,8 @@ export async function POST(request: Request) {
       duration,
       leadId,
       honeypot,
+      formName,
+      source,
     } = body;
 
     // Anti-spam check
@@ -103,6 +105,8 @@ export async function POST(request: Request) {
       );
     }
 
+    const formTitle = formName || source || (price && price.includes("0 UZS") ? "Bepul Konsultatsiya" : "Loyiha Smetasi");
+    const safeForm = escapeHtml(formTitle);
     const safeLeadId = escapeHtml(leadId || "QA-" + Date.now());
     const safeName = escapeHtml(name);
     const safePhone = escapeHtml(phone);
@@ -127,14 +131,13 @@ export async function POST(request: Request) {
 
     const messageText = `🎯 <b>Yangi QA Testing So'rovi!</b>
 ━━━━━━━━━━━━━━━━━━━
+📋 <b>Forma:</b> <b>${safeForm}</b>
 🆔 <b>So'rov ID:</b> <code>${safeLeadId}</code>
 👤 <b>Mijoz:</b> ${safeName}
 📞 <b>Telefon:</b> ${safePhone}
 ${safeEmail ? `📧 <b>Email:</b> ${safeEmail}\n` : ""}${safeCompany ? `🏢 <b>Kompaniya:</b> ${safeCompany}\n` : ""}${safeTelegram ? `💬 <b>Telegram:</b> ${safeTelegram}\n` : ""}
 🛠 <b>Xizmatlar:</b> ${safeServices}
-💰 <b>Smeta narxi:</b> ${safePrice}
-⏱ <b>Taxminiy muddat:</b> ${safeDuration}
-${safeComment ? `\n📝 <b>Loyiha haqida:</b>\n<i>${safeComment}</i>\n` : ""}━━━━━━━━━━━━━━━━━━━
+${price && price !== "Ko'rsatilmagan" ? `💰 <b>Smeta narxi:</b> ${safePrice}\n` : ""}${duration && duration !== "Ko'rsatilmagan" ? `⏱ <b>Taxminiy muddat:</b> ${safeDuration}\n` : ""}${safeComment ? `\n📝 <b>Izoh / Loyiha:</b>\n<i>${safeComment}</i>\n` : ""}━━━━━━━━━━━━━━━━━━━
 📅 <b>Vaqt:</b> ${escapeHtml(nowFormatted)}`;
 
     try {

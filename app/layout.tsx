@@ -148,6 +148,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { ConsultationModalProvider } from "@/lib/consultation-context";
+import { ConsultationModal } from "@/components/modals/ConsultationModal";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -162,6 +165,11 @@ export default function RootLayout({
         {/* DNS prefetch for Telegram (CTA links) */}
         <link rel="dns-prefetch" href="https://t.me" />
 
+        {/* Anti-stale cache directives for WebViews and browser caches */}
+        <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta httpEquiv="Pragma" content="no-cache" />
+        <meta httpEquiv="Expires" content="0" />
+
         {/* Critical inline styles for splash screen and instant anti-FOUC */}
         <style
           dangerouslySetInnerHTML={{
@@ -169,10 +177,10 @@ export default function RootLayout({
           }}
         />
 
-        {/* Synchronous theme and splash pre-init — executes before render/paint to eliminate FOUC */}
+        {/* Synchronous theme, splash pre-init & stale SW cleanup — executes before render/paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");var sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var isDark=t==="dark"||((!t||t==="system")&&sysDark);if(isDark){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}var seenSession=sessionStorage.getItem("testinghub_tab_seen");var lastSeen=localStorage.getItem("testinghub_splash_last");var isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;var prefersReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;var isSeen=seenSession||(isStandalone&&lastSeen&&(Date.now()-parseInt(lastSeen,10)<8*3600*1000));if(!isSeen&&!prefersReducedMotion){document.documentElement.classList.add("splash-active");setTimeout(function(){document.documentElement.classList.remove("splash-active");},3500);}}catch(e){}})();`,
+            __html: `(function(){try{if("serviceWorker"in navigator){navigator.serviceWorker.getRegistrations().then(function(rs){for(var r of rs){r.unregister();}});};var t=localStorage.getItem("testinghub_theme");var sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var isDark=t==="dark"||((!t||t==="system")&&sysDark);if(isDark){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}var seenSession=sessionStorage.getItem("testinghub_tab_seen");var lastSeen=localStorage.getItem("testinghub_splash_last");var isStandalone=window.matchMedia("(display-mode: standalone)").matches||window.navigator.standalone;var prefersReducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;var isSeen=seenSession||(isStandalone&&lastSeen&&(Date.now()-parseInt(lastSeen,10)<8*3600*1000));if(!isSeen&&!prefersReducedMotion){document.documentElement.classList.add("splash-active");setTimeout(function(){document.documentElement.classList.remove("splash-active");},3500);}}catch(e){}})();`,
           }}
         />
 
@@ -188,13 +196,16 @@ export default function RootLayout({
             <CurrencyProvider>
               <AuthProvider>
                 <ToastProvider>
-                  <DeviceTracker />
-                  <SplashScreen />
-                  <div id="app-content" className="relative flex min-h-screen flex-col">
-                    <Header />
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                  </div>
+                  <ConsultationModalProvider>
+                    <DeviceTracker />
+                    <SplashScreen />
+                    <ConsultationModal />
+                    <div id="app-content" className="relative flex min-h-screen flex-col">
+                      <Header />
+                      <main className="flex-1">{children}</main>
+                      <Footer />
+                    </div>
+                  </ConsultationModalProvider>
                 </ToastProvider>
               </AuthProvider>
             </CurrencyProvider>

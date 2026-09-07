@@ -33,7 +33,17 @@ export function CTA() {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
               <Link
                 href="/#calculator"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-brand-glow flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+                onClick={(e) => {
+                  if (typeof window !== "undefined" && window.location.pathname === "/") {
+                    const el = document.getElementById("calculator");
+                    if (el) {
+                      e.preventDefault();
+                      el.scrollIntoView({ behavior: "smooth" });
+                      window.history.pushState(null, "", "/#calculator");
+                    }
+                  }
+                }}
+                className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-brand-glow flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
               >
                 <span>{t("cta.btnCalc")}</span>
                 <ArrowRight className="h-4 w-4" />

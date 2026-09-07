@@ -15,12 +15,12 @@ export function SplashScreen() {
   const dismiss = useCallback(() => {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
-    
+
     // Ushbu tabda va PWA da animatsiya ko'rilganini belgilaymiz
     try {
       sessionStorage.setItem(STORAGE_KEY, "true");
       localStorage.setItem("testinghub_splash_last", Date.now().toString());
-    } catch {}
+    } catch { }
 
     // Scrollni darhol tiklaymiz va chiqish fazasini boshlaymiz
     if (typeof document !== "undefined") {
@@ -65,7 +65,7 @@ export function SplashScreen() {
         try {
           sessionStorage.setItem(STORAGE_KEY, "true");
           localStorage.setItem("testinghub_splash_last", Date.now().toString());
-        } catch {}
+        } catch { }
       };
       window.addEventListener("beforeunload", handleBeforeUnload);
 
@@ -108,19 +108,18 @@ export function SplashScreen() {
   return (
     <div
       id="testinghub-splash"
-      className={`fixed inset-0 z-[9999] flex items-center justify-center select-none overflow-hidden bg-white dark:bg-[#15192e] text-[#161e43] dark:text-white transition-opacity duration-350 ease-in-out ${
-        isExiting ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      className={`fixed inset-0 z-[9999] flex items-center justify-center select-none overflow-hidden bg-white dark:bg-[#15192e] text-[#161e43] dark:text-white transition-opacity duration-350 ease-in-out ${isExiting ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
     >
       {/* Chuqur vinetka foni */}
-      <div 
+      <div
         className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_50%,#eef5fc_0%,#f7faff_60%,#ffffff_100%)] dark:bg-[radial-gradient(circle_at_50%_50%,#1e264a_0%,#171c35_55%,#15192e_100%)]"
       />
 
       {/* Markazdan kengayuvchi engil nur aurası (GPU friendly) */}
       <motion.div
         initial={{ scale: 0.8, opacity: 0.2 }}
-        animate={{ 
+        animate={{
           scale: isExiting ? 2.5 : isRevealed ? [0.8, 1.2, 1.1] : 0.8,
           opacity: isExiting ? 0 : [0.2, 0.35, 0.25]
         }}
@@ -162,14 +161,14 @@ export function SplashScreen() {
           ASOSIY LOGO KONTAYNERI
       ═════════════════════════════════════════════════════════════════ */}
       <div className="relative z-10 flex items-center justify-center px-6">
-        
+
         {/* 1. Logo Icon: Avval markazda chiqadi, so'ng chapga suriladi */}
         <motion.div
           layout
           initial={{ scale: 0.9, opacity: 1 }}
-          animate={{ 
-            scale: 1, 
-            opacity: 1, 
+          animate={{
+            scale: 1,
+            opacity: 1,
           }}
           transition={{
             layout: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
@@ -212,14 +211,14 @@ export function SplashScreen() {
           {isRevealed && (
             <motion.div
               initial={{ width: 0, opacity: 0, x: -20 }}
-              animate={{ 
-                width: "auto", 
-                opacity: 1, 
-                x: 0 
+              animate={{
+                width: "auto",
+                opacity: 1,
+                x: 0
               }}
-              transition={{ 
-                duration: 0.7, 
-                ease: [0.16, 1, 0.3, 1] 
+              transition={{
+                duration: 0.7,
+                ease: [0.16, 1, 0.3, 1]
               }}
               className="overflow-hidden flex flex-col justify-center ml-4 sm:ml-5 md:ml-6 text-left shrink-0"
             >

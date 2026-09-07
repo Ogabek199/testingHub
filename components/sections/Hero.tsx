@@ -2,11 +2,13 @@
 
 import React from "react";
 import { useTranslation } from "@/lib/i18n";
+import { useConsultationModal } from "@/lib/consultation-context";
 import { ArrowRight, Sparkles, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 export function Hero() {
   const { t } = useTranslation();
+  const { openConsultationModal } = useConsultationModal();
 
   return (
     <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden">
@@ -36,16 +38,27 @@ export function Hero() {
 
         {/* Action Buttons */}
         <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3.5">
-          <Link
-            href="/#calculator"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-coral-glow flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
+          <button
+            type="button"
+            onClick={() => openConsultationModal()}
+            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-sm shadow-coral-glow flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
           >
             <span>{t("hero.ctaConsult")}</span>
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </button>
           <Link
-            href="/#bug-cost"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-foreground font-semibold text-sm border border-black/[0.06] dark:border-white/[0.08] transition-all"
+            href="/#calculator"
+            onClick={(e) => {
+              if (typeof window !== "undefined" && window.location.pathname === "/") {
+                const el = document.getElementById("calculator");
+                if (el) {
+                  e.preventDefault();
+                  el.scrollIntoView({ behavior: "smooth" });
+                  window.history.pushState(null, "", "/#calculator");
+                }
+              }
+            }}
+            className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.12] text-foreground font-semibold text-sm border border-black/[0.06] dark:border-white/[0.08] transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
           >
             <span>{t("hero.ctaCalc")}</span>
           </Link>

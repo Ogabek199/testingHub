@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation, Language } from "@/lib/i18n";
 import { useTheme } from "@/lib/theme";
+import { useConsultationModal } from "@/lib/consultation-context";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
@@ -12,6 +13,7 @@ export function Header() {
   const pathname = usePathname();
   const { language, setLanguage, t } = useTranslation();
   const { resolvedTheme, toggleTheme } = useTheme();
+  const { openConsultationModal } = useConsultationModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isDark = resolvedTheme === "dark";
@@ -49,12 +51,13 @@ export function Header() {
           {/* Desktop Right Controls: CTA, Lang, Theme */}
           <div className="hidden lg:flex items-center gap-2 xl:gap-2.5 shrink-0">
             {/* CTA Button */}
-            <Link
-              href="/#calculator"
-              className="px-3.5 xl:px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap shrink-0"
+            <button
+              type="button"
+              onClick={() => openConsultationModal()}
+              className="px-3.5 xl:px-4 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap shrink-0 cursor-pointer active:scale-95"
             >
               {t("hero.ctaConsult")}
-            </Link>
+            </button>
 
             {/* Segmented 3-Language Switcher (UZ | RU | EN) */}
             <div className="ios-segmented shrink-0">
@@ -104,12 +107,13 @@ export function Header() {
             </button>
 
             {/* Free Consultation button (In front of hamburger menu, NOT inside) */}
-            <Link
-              href="/#calculator"
-              className="px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap flex items-center gap-1 active:scale-95 shrink-0"
+            <button
+              type="button"
+              onClick={() => openConsultationModal()}
+              className="px-2.5 sm:px-3.5 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white font-bold text-xs shadow-sm shadow-primary/30 transition-all whitespace-nowrap flex items-center gap-1 active:scale-95 shrink-0 cursor-pointer"
             >
               <span>{t("hero.ctaConsult")}</span>
-            </Link>
+            </button>
 
             {/* Hamburger Toggle Button */}
             <button
