@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import { useTranslation, Language } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { useToast } from "@/lib/toast";
 import { 
   LogOut, 
@@ -22,30 +23,11 @@ export function DashboardLayoutClient({
 }) {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
   const { language, setLanguage, t } = useTranslation();
+  const { resolvedTheme, toggleTheme } = useTheme();
   const { info: toastInfo } = useToast();
   const router = useRouter();
-  const [isDark, setIsDark] = useState(false);
 
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
-  }, []);
-
-  const toggleTheme = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-      try {
-        localStorage.setItem("testinghub_theme", "light");
-      } catch {}
-    } else {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-      try {
-        localStorage.setItem("testinghub_theme", "dark");
-      } catch {}
-    }
-  };
+  const isDark = resolvedTheme === "dark";
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

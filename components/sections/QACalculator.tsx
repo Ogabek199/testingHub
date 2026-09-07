@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 
 import { useCurrency, Currency, UZS_PER_USD } from "@/lib/currency";
+import { SITE_URL } from "@/lib/constants";
 
 interface ServiceItem {
   id: string;
@@ -304,27 +305,40 @@ export function QACalculator() {
     const priceText = `${formatNumber(calculation.minPriceUZS)} – ${formatNumber(calculation.maxPriceUZS)} so'm (~$${minUSD} – $${maxUSD} USD)${isStartup ? " [Start-up -20% chegirma qo'llandi]" : ""}`;
     const durationText = `${calculation.minDays} – ${calculation.maxDays} ish kuni`;
 
-    // Secure server-side Telegram dispatch via /api/lead
+    // Secure server-side Telegram dispatch via /api/lead (with PWA cross-origin fallback)
+    const payload = JSON.stringify({
+      name: nameTrim,
+      phone: formData.phone,
+      email: formData.email.trim(),
+      company: formData.company.trim(),
+      telegram: formattedTelegram,
+      comment: formData.comment.trim(),
+      services: selectedServiceNames,
+      price: priceText,
+      duration: durationText,
+      leadId,
+      honeypot: formData.honeypot,
+    });
+
     try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: nameTrim,
-          phone: formData.phone,
-          email: formData.email.trim(),
-          company: formData.company.trim(),
-          telegram: formattedTelegram,
-          comment: formData.comment.trim(),
-          services: selectedServiceNames,
-          price: priceText,
-          duration: durationText,
-          leadId,
-          honeypot: formData.honeypot,
-        }),
-      });
+      let res: Response | null = null;
+      try {
+        res = await fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        });
+      } catch (firstErr) {
+        console.warn("Relative /api/lead fetch failed, trying absolute SITE_URL fallback:", firstErr);
+        // Fallback for PWA standalone modes if relative fetch fails
+        res = await fetch(`${SITE_URL}/api/lead`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: payload,
+        });
+      }
+
+      if (!res) throw new Error("No response received");
 
       const resData = await res.json().catch(() => null);
       if (!res.ok || resData?.success === false) {
@@ -409,11 +423,10 @@ export function QACalculator() {
                         key={cur}
                         type="button"
                         onClick={() => setCurrency(cur)}
-                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          currency === cur
-                            ? "bg-primary text-white shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}
+                        className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${currency === cur
+                          ? "bg-primary text-white shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                          }`}
                       >
                         {cur}
                       </button>
@@ -431,18 +444,16 @@ export function QACalculator() {
                     <div
                       key={srv.id}
                       onClick={() => toggleService(srv.id)}
-                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${
-                        isChecked
-                          ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
-                          : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
-                      }`}
+                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex items-start gap-3 ${isChecked
+                        ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
+                        : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
+                        }`}
                     >
                       <div
-                        className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                          isChecked
-                            ? "bg-primary text-white"
-                            : "bg-black/5 dark:bg-white/10 text-muted-foreground"
-                        }`}
+                        className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${isChecked
+                          ? "bg-primary text-white"
+                          : "bg-black/5 dark:bg-white/10 text-muted-foreground"
+                          }`}
                       >
                         <Icon className="h-4 w-4" />
                       </div>
@@ -484,11 +495,10 @@ export function QACalculator() {
                       key={item.id}
                       type="button"
                       onClick={() => setProjectState(item.id)}
-                      className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-all ${
-                        projectState === item.id
-                          ? "bg-primary/10 border-primary text-primary font-bold"
-                          : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
-                      }`}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-all ${projectState === item.id
+                        ? "bg-primary/10 border-primary text-primary font-bold"
+                        : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
+                        }`}
                     >
                       {t(item.labelKey)}
                     </button>
@@ -512,11 +522,10 @@ export function QACalculator() {
                       key={item.id}
                       type="button"
                       onClick={() => setProjectSize(item.id)}
-                      className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-all ${
-                        projectSize === item.id
-                          ? "bg-primary/10 border-primary text-primary font-bold"
-                          : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
-                      }`}
+                      className={`w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-all ${projectSize === item.id
+                        ? "bg-primary/10 border-primary text-primary font-bold"
+                        : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
+                        }`}
                     >
                       {t(item.labelKey)}
                     </button>
@@ -528,19 +537,17 @@ export function QACalculator() {
             {/* Special Startup Discount Card */}
             <div
               onClick={() => setIsStartup(!isStartup)}
-              className={`p-4 md:p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                isStartup
-                  ? "bg-primary/[0.05] dark:bg-primary/[0.1] border-primary ring-1 ring-primary/40 shadow-sm"
-                  : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
-              }`}
+              className={`p-4 md:p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${isStartup
+                ? "bg-primary/[0.05] dark:bg-primary/[0.1] border-primary ring-1 ring-primary/40 shadow-sm"
+                : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
+                }`}
             >
               <div className="flex items-center gap-3.5 min-w-0">
                 <div
-                  className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${
-                    isStartup
-                      ? "bg-primary text-white shadow-coral-glow"
-                      : "bg-black/5 dark:bg-white/10 text-muted-foreground"
-                  }`}
+                  className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 transition-colors ${isStartup
+                    ? "bg-primary text-white shadow-coral-glow"
+                    : "bg-black/5 dark:bg-white/10 text-muted-foreground"
+                    }`}
                 >
                   <Rocket className="h-5 w-5" />
                 </div>
@@ -561,14 +568,12 @@ export function QACalculator() {
 
               {/* iOS Style Switch */}
               <div
-                className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out shrink-0 ${
-                  isStartup ? "bg-primary" : "bg-black/20 dark:bg-white/20"
-                }`}
+                className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors duration-200 ease-in-out shrink-0 ${isStartup ? "bg-primary" : "bg-black/20 dark:bg-white/20"
+                  }`}
               >
                 <div
-                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${
-                    isStartup ? "translate-x-5" : "translate-x-0"
-                  }`}
+                  className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform duration-200 ease-in-out ${isStartup ? "translate-x-5" : "translate-x-0"
+                    }`}
                 />
               </div>
             </div>
@@ -606,11 +611,10 @@ export function QACalculator() {
                     <div
                       key={pkg.id}
                       onClick={() => setPackageTier(pkg.id)}
-                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
-                        isSelected
-                          ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
-                          : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
-                      }`}
+                      className={`p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${isSelected
+                        ? "bg-primary/[0.04] dark:bg-primary/[0.08] border-primary ring-1 ring-primary/40 shadow-sm"
+                        : "bg-black/[0.01] dark:bg-white/[0.02] border-black/[0.06] dark:border-white/[0.08] hover:border-black/20 dark:hover:border-white/20"
+                        }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
@@ -650,11 +654,10 @@ export function QACalculator() {
                         key={item.id}
                         type="button"
                         onClick={() => setUrgency(item.id)}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
-                          urgency === item.id
-                            ? "bg-primary/10 border-primary text-primary font-bold"
-                            : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
-                        }`}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium border transition-all ${urgency === item.id
+                          ? "bg-primary/10 border-primary text-primary font-bold"
+                          : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
+                          }`}
                       >
                         {t(item.labelKey)}
                       </button>
@@ -674,11 +677,10 @@ export function QACalculator() {
                         key={item.id}
                         type="button"
                         onClick={() => setSupportType(item.id)}
-                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium border transition-all ${
-                          supportType === item.id
-                            ? "bg-primary/10 border-primary text-primary font-bold"
-                            : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
-                        }`}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium border transition-all ${supportType === item.id
+                          ? "bg-primary/10 border-primary text-primary font-bold"
+                          : "border-black/[0.06] dark:border-white/[0.08] hover:bg-black/[0.02] dark:hover:bg-white/[0.02] text-foreground"
+                          }`}
                       >
                         {t(item.labelKey)}
                       </button>

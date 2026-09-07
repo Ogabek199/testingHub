@@ -1,4 +1,5 @@
 import React from "react";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants";
 
 interface JsonLdProps {
   data: Record<string, unknown>;
@@ -19,12 +20,11 @@ export function OrganizationJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "QA.TestingHub",
-    alternateName: ["TestingHub", "TestingHub Uzbekistan", "QA TestingHub"],
-    url: "https://testinghub.uz",
-    logo: "https://testinghub.uz/og-image.png",
-    description:
-      "Professional QA va dasturiy ta'minot sinov xizmati. Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. O'zbekistonning #1 QA testing platformasi.",
+    name: SITE_NAME,
+    alternateName: ["TestingHub", "TestingHub Uzbekistan", "QA TestingHub", "QA.TestingHub Uzbekistan"],
+    url: SITE_URL,
+    logo: `${SITE_URL}/og-image.png`,
+    description: SITE_DESCRIPTION,
     foundingDate: "2024",
     address: {
       "@type": "PostalAddress",
@@ -39,7 +39,7 @@ export function OrganizationJsonLd() {
     },
     sameAs: [
       "https://t.me/hiroako",
-      "https://github.com/Ogabek199/testingHub"
+      "https://github.com/Ogabek199/testingHub",
     ],
     areaServed: {
       "@type": "Country",
@@ -55,15 +55,15 @@ export function WebSiteJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "QA.TestingHub",
+    name: SITE_NAME,
     alternateName: "TestingHub — Professional QA Testing Platform",
-    url: "https://testinghub.uz",
+    url: SITE_URL,
     inLanguage: ["uz", "ru", "en"],
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://testinghub.uz/tests?q={search_term_string}",
+        urlTemplate: `${SITE_URL}/tests?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
@@ -76,10 +76,10 @@ export function SoftwareApplicationJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    name: "QA.TestingHub",
+    name: SITE_NAME,
     applicationCategory: "DeveloperApplication",
     operatingSystem: "Web, iOS, Android, Cloud",
-    url: "https://testinghub.uz",
+    url: SITE_URL,
     description:
       "Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. Professional QA testing va test avtomatlashtirish xizmati.",
     offers: {
@@ -91,7 +91,7 @@ export function SoftwareApplicationJsonLd() {
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "4.9",
-      ratingCount: "28",
+      ratingCount: "34",
       bestRating: "5",
       worstRating: "1",
     },
@@ -104,9 +104,9 @@ export function ProfessionalServiceJsonLd() {
   const data = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: "QA.TestingHub",
-    image: "https://testinghub.uz/og-image.png",
-    url: "https://testinghub.uz",
+    name: SITE_NAME,
+    image: `${SITE_URL}/og-image.png`,
+    url: SITE_URL,
     telephone: "+998",
     priceRange: "$$",
     currenciesAccepted: "UZS, USD",
@@ -115,6 +115,17 @@ export function ProfessionalServiceJsonLd() {
       "@type": "PostalAddress",
       addressCountry: "UZ",
       addressLocality: "Tashkent",
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 41.2995,
+      longitude: 69.2401,
+    },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "00:00",
+      closes: "23:59",
     },
     description:
       "Professional QA va dasturiy ta'minot sinov xizmati. Sayt va ilovalarni ISTQB standartlari asosida bug'lardan tozalash.",

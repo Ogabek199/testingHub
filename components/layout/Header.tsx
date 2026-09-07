@@ -1,43 +1,20 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation, Language } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 
 export function Header() {
   const pathname = usePathname();
   const { language, setLanguage, t } = useTranslation();
-  const [isDark, setIsDark] = useState(false);
+  const { resolvedTheme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    // Initialize dark mode from html class or localstorage
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
-  }, []);
-
-  if (pathname && pathname.startsWith("/dashboard")) {
-    return null;
-  }
-
-  const toggleTheme = () => {
-    if (document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-      try {
-        localStorage.setItem("testinghub_theme", "light");
-      } catch { }
-    } else {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-      try {
-        localStorage.setItem("testinghub_theme", "dark");
-      } catch { }
-    }
-  };
+  const isDark = resolvedTheme === "dark";
 
   const navLinks = [
     { label: t("nav.bugCost"), href: "/#bug-cost" },
@@ -97,9 +74,10 @@ export function Header() {
 
             {/* Theme Toggle Button */}
             <button
+              type="button"
               onClick={toggleTheme}
               aria-label="Toggle Theme"
-              className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] flex items-center justify-center text-foreground hover:bg-black/[0.05] dark:hover:bg-white/[0.1] transition-all shrink-0 cursor-pointer"
+              className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] flex items-center justify-center text-foreground hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-95 transition-all shrink-0 cursor-pointer"
             >
               {isDark ? (
                 <Sun className="h-4 w-4 text-amber-400" />
@@ -109,8 +87,22 @@ export function Header() {
             </button>
           </div>
 
-          {/* Mobile Actions: Free Consultation button + Hamburger toggle */}
-          <div className="flex lg:hidden items-center gap-2 sm:gap-2.5 shrink-0">
+          {/* Mobile Actions: Theme toggle + Free Consultation button + Hamburger toggle */}
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2.5 shrink-0">
+            {/* Mobile Direct Theme Toggle Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              aria-label="Toggle Theme"
+              className="h-8 w-8 rounded-full border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] flex items-center justify-center text-foreground hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-95 transition-all shrink-0 cursor-pointer"
+            >
+              {isDark ? (
+                <Sun className="h-4 w-4 text-amber-400" />
+              ) : (
+                <Moon className="h-4 w-4 text-muted-foreground" />
+              )}
+            </button>
+
             {/* Free Consultation button (In front of hamburger menu, NOT inside) */}
             <Link
               href="/#calculator"
@@ -121,6 +113,7 @@ export function Header() {
 
             {/* Hamburger Toggle Button */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle mobile navigation menu"
               className="p-1.5 sm:p-2 rounded-lg text-foreground border border-black/10 dark:border-white/15 bg-black/[0.02] dark:bg-white/[0.05] hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center justify-center cursor-pointer shrink-0"

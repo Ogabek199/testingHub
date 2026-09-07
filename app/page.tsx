@@ -9,25 +9,24 @@ import { CaseStudies } from "@/components/sections/CaseStudies";
 import { CTA } from "@/components/sections/CTA";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { FAQJsonLd } from "@/components/seo/JsonLd";
+import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
-  description:
-    "Professional QA va dasturiy ta'minot sinov xizmati. Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. O'zbekistonning #1 QA platformasi.",
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
   alternates: {
-    canonical: "https://testinghub.uz",
+    canonical: SITE_URL,
   },
   openGraph: {
-    title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
-    description:
-      "Dasturingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. Manual & Automated QA xizmatlari.",
-    url: "https://testinghub.uz",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
     images: [
       {
-        url: "/opengraph-image",
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "QA.TestingHub — Professional QA Testing Platform",
+        alt: SITE_TITLE,
       },
     ],
   },

@@ -27,6 +27,19 @@ function escapeHtml(text: string | null | undefined): string {
     .replace(/"/g, "&quot;");
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: Request) {
   try {
     // Rate limiter check
@@ -35,7 +48,7 @@ export async function POST(request: Request) {
     if (isRateLimited(ip)) {
       return NextResponse.json(
         { success: false, error: "Juda ko'p so'rov yuborildi. Iltimos, 1 daqiqadan so'ng qayta urinib ko'ring." },
-        { status: 429 }
+        { status: 429, headers: corsHeaders }
       );
     }
 
@@ -56,7 +69,7 @@ export async function POST(request: Request) {
 
     // Anti-spam check
     if (honeypot) {
-      return NextResponse.json({ success: false, error: "Spam detected" }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Spam detected" }, { status: 400, headers: corsHeaders });
     }
 
     // Validation
@@ -70,7 +83,7 @@ export async function POST(request: Request) {
     if (!cleanName || !cleanPhone) {
       return NextResponse.json(
         { success: false, error: "Ism va telefon raqami majburiy!" },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -86,7 +99,7 @@ export async function POST(request: Request) {
           error: "Telegram bot konfiguratsiyasi serverda topilmadi (TELEGRAM_BOT_TOKEN yoki TELEGRAM_CHAT_ID sozlanmagan).",
           leadId,
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
 
@@ -166,7 +179,7 @@ ${safeComment ? `\n📝 <b>Loyiha haqida:</b>\n<i>${safeComment}</i>\n` : ""}━
             error: tgData.description || "Telegramga xabar yuborishda xatolik yuz berdi",
             leadId,
           },
-          { status: 502 }
+          { status: 502, headers: corsHeaders }
         );
       }
     } catch (tgErr: any) {
@@ -177,16 +190,16 @@ ${safeComment ? `\n📝 <b>Loyiha haqida:</b>\n<i>${safeComment}</i>\n` : ""}━
           error: "Telegram serveri bilan bog'lanishda xatolik",
           leadId,
         },
-        { status: 502 }
+        { status: 502, headers: corsHeaders }
       );
     }
 
-    return NextResponse.json({ success: true, leadId });
+    return NextResponse.json({ success: true, leadId }, { headers: corsHeaders });
   } catch (error: any) {
     console.error("Lead submission error:", error);
     return NextResponse.json(
       { success: false, error: error.message || "Server error" },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

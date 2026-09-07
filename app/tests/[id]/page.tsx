@@ -1,5 +1,6 @@
 import { TestDetailClient } from "@/components/tests/TestDetailClient";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 import type { Metadata } from "next";
 
 const testInfoMap: Record<string, { title: string; desc: string }> = {
@@ -51,7 +52,7 @@ export async function generateMetadata({
   };
 
   const title = `${testInfo.title} — QA Test Natijalari`;
-  const url = `https://testinghub.uz/tests/${params.id}`;
+  const url = `${SITE_URL}/tests/${params.id}`;
 
   return {
     title,
@@ -88,9 +89,9 @@ export default function TestDetailPage({
     <>
       <BreadcrumbJsonLd
         items={[
-          { name: "Bosh sahifa", url: "https://testinghub.uz" },
-          { name: "Testlar", url: "https://testinghub.uz/tests" },
-          { name: testInfo.title, url: `https://testinghub.uz/tests/${params.id}` },
+          { name: "Bosh sahifa", url: SITE_URL },
+          { name: "Testlar", url: `${SITE_URL}/tests` },
+          { name: testInfo.title, url: `${SITE_URL}/tests/${params.id}` },
         ]}
       />
       <TestDetailClient id={params.id} />

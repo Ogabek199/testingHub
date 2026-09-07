@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/constants";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://testinghub.uz";
+  const baseUrl = SITE_URL;
   const now = new Date();
 
   // Test ID lari
@@ -11,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}/tests/${id}`,
     lastModified: now,
     changeFrequency: "weekly",
-    priority: 0.7,
+    priority: 0.8,
   }));
 
   return [

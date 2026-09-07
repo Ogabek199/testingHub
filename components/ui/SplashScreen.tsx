@@ -10,6 +10,7 @@ const STORAGE_KEY = "testinghub_tab_seen";
 export function SplashScreen() {
   const [isVisible, setIsVisible] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [phase, setPhase] = useState<"center" | "reveal" | "settled" | "exit">("center");
   const dismissedRef = useRef(false);
 
@@ -17,9 +18,10 @@ export function SplashScreen() {
     if (dismissedRef.current) return;
     dismissedRef.current = true;
     
-    // Ushbu tabda animatsiya ko'rilganini belgilaymiz (tab yopilguncha saqlanadi)
+    // Ushbu tabda va PWA da animatsiya ko'rilganini belgilaymiz
     try {
       sessionStorage.setItem(STORAGE_KEY, "true");
+      localStorage.setItem("testinghub_splash_last", Date.now().toString());
     } catch {}
 
     // Scrollni darhol tiklaymiz va chiqish fazasini boshlaymiz
@@ -32,48 +34,56 @@ export function SplashScreen() {
     // Silliq fade out tugashi bilan komponentni yashiramiz
     setTimeout(() => {
       setIsVisible(false);
-    }, 550);
+    }, 350);
   }, []);
 
   useEffect(() => {
     setHasMounted(true);
 
     try {
-      // Eski doimiy localStorage kalitini tozalash (avvalgi foydalanuvchilar bloklanib qolmasligi uchun)
-      localStorage.removeItem("testinghub_intro_seen");
+      // Mavzuni html elementidan aniqlaymiz
+      if (typeof document !== "undefined") {
+        setIsDark(document.documentElement.classList.contains("dark"));
 
-      // Joriy tabda allaqachon ko'rganmi? (F5 / refresh holatida qayta chiqmasligi uchun)
-      const seen = sessionStorage.getItem(STORAGE_KEY);
-      if (seen) {
-        setIsVisible(false);
-        if (typeof document !== "undefined") {
+        // Kuchsiz qurilmalar yoki harakatni cheklovchi rejimda animatsiyasiz darhol ochish
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          setIsVisible(false);
           document.body.style.overflow = "";
           document.documentElement.classList.remove("splash-active");
+          return;
         }
-        return;
+
+        const seenSession = sessionStorage.getItem(STORAGE_KEY);
+        const lastSeen = localStorage.getItem("testinghub_splash_last");
+        const isStandalone = window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any)?.standalone;
+
+        // Agar joriy sessiyada yoki PWA da so'nggi 8 soat ichida ko'rilgan bo'lsa, qayta yuklamaymiz (qurilma qotmasligi uchun)
+        if (seenSession || (isStandalone && lastSeen) || (lastSeen && Date.now() - parseInt(lastSeen, 10) < 8 * 3600 * 1000)) {
+          setIsVisible(false);
+          document.body.style.overflow = "";
+          document.documentElement.classList.remove("splash-active");
+          return;
+        }
       }
 
-      // Tabda birinchi marta kirganda animatsiyani yoqamiz.
-      // DIQQAT: sessionStorage.setItem ni bu yerda darhol chaqirmaymiz!
-      // Chunki React StrictMode dev muhitida effectni 2 marta yurgizadi va
-      // agar shu zahoti yozilsa, 2-qadamda animatsiya o'chib qoladi.
+      // Tabda birinchi marta kirganda animatsiyani yoqamiz
       setIsVisible(true);
       if (typeof document !== "undefined") {
         document.body.style.overflow = "hidden";
       }
 
-      // Foydalanuvchi animatsiya tugamasdan sahifani yangilasa (refresh), qayta chiqmasligi uchun
       const handleBeforeUnload = () => {
         try {
           sessionStorage.setItem(STORAGE_KEY, "true");
+          localStorage.setItem("testinghub_splash_last", Date.now().toString());
         } catch {}
       };
       window.addEventListener("beforeunload", handleBeforeUnload);
 
-      // Harakat vaqt rejasi (Animatsiyadan tez va silliq o'tishi uchun)
-      const t1 = setTimeout(() => setPhase("reveal"), 700);
-      const t2 = setTimeout(() => setPhase("settled"), 1600);
-      const t3 = setTimeout(() => dismiss(), 2600);
+      // Tez va silliq harakat vaqt rejasi (Qurilma qotmasligi uchun 1.1s ichida yakunlanadi)
+      const t1 = setTimeout(() => setPhase("reveal"), 280);
+      const t2 = setTimeout(() => setPhase("settled"), 650);
+      const t3 = setTimeout(() => dismiss(), 1150);
 
       return () => {
         window.removeEventListener("beforeunload", handleBeforeUnload);
@@ -115,98 +125,60 @@ export function SplashScreen() {
           key="testinghub-splash"
           initial={{ opacity: 1 }}
           animate={{ opacity: isExiting ? 0 : 1 }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
           exit={{ 
             opacity: 0,
-            transition: { duration: 0.5, ease: "easeInOut" } 
+            transition: { duration: 0.35, ease: "easeInOut" } 
           }}
-          className={`fixed inset-0 z-[9999] flex items-center justify-center bg-[#060810] text-white select-none overflow-hidden ${
-            isExiting ? "pointer-events-none" : ""
-          }`}
+          className={`fixed inset-0 z-[9999] flex items-center justify-center select-none overflow-hidden transition-colors duration-200 ${
+            isDark ? "bg-[#15192e] text-white" : "bg-white text-[#161e43]"
+          } ${isExiting ? "pointer-events-none" : ""}`}
         >
-          {/* ═════════════════════════════════════════════════════════════════
-              BOSHQACHA TARQALUVCHI DASTURIY FON (EXPANDING DISPERSION WAVES)
-          ═════════════════════════════════════════════════════════════════ */}
-          
           {/* Chuqur vinetka foni */}
           <div 
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(circle at 50% 50%, #0d162a 0%, #080c18 55%, #05070f 100%)",
+              background: isDark
+                ? "radial-gradient(circle at 50% 50%, #1e264a 0%, #171c35 55%, #15192e 100%)"
+                : "radial-gradient(circle at 50% 50%, #eef5fc 0%, #f7faff 60%, #ffffff 100%)",
             }}
           />
 
-          {/* Markazdan kengayib tarqaluvchi nur aurası */}
+          {/* Markazdan kengayuvchi engil nur aurası (GPU friendly) */}
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ 
+              scale: isExiting ? 2.5 : isRevealed ? [0.8, 1.2, 1.1] : 0.8,
+              opacity: isExiting ? 0 : [0, isDark ? 0.35 : 0.2, isDark ? 0.25 : 0.15]
+            }}
+            transition={{ duration: isExiting ? 0.4 : 1.0, ease: "easeOut" }}
+            className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] h-[340px] rounded-full blur-2xl pointer-events-none will-change-transform ${
+              isDark
+                ? "bg-gradient-to-tr from-[#17ff91]/25 via-[#00e5ff]/15 to-transparent"
+                : "bg-gradient-to-tr from-[#0fae66]/15 via-[#38bdf8]/10 to-transparent"
+            }`}
+          />
+
+          {/* Yengil va silliq impuls halqasi (GPU hardware accelerated) */}
           <motion.div
             initial={{ scale: 0.3, opacity: 0 }}
-            animate={{ 
-              scale: isExiting ? 3.8 : isRevealed ? [1, 1.4, 1.25] : 0.9,
-              opacity: isExiting ? 0 : [0, 0.45, 0.3]
-            }}
-            transition={{ duration: isExiting ? 0.6 : 1.8, ease: "easeOut" }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-[#17ff91]/30 via-[#00e5ff]/20 to-transparent blur-[110px] pointer-events-none"
-          />
-
-          {/* 1-Tarqaluvchi to'lqin: Zumrad neon to'lqini (Markazdan kengayuvchi) */}
-          <motion.div
-            initial={{ scale: 0.15, opacity: 0 }}
             animate={{
-              scale: [0.15, 2.6, 4.8],
-              opacity: [0, 0.85, 0],
+              scale: [0.3, 1.8, 3.2],
+              opacity: [0, isDark ? 0.75 : 0.5, 0],
             }}
             transition={{
-              delay: 0.4,
-              duration: 1.8,
+              delay: 0.2,
+              duration: 0.9,
               ease: [0.16, 1, 0.3, 1],
             }}
-            className="absolute rounded-full pointer-events-none"
+            className="absolute rounded-full pointer-events-none will-change-transform"
             style={{
-              width: 320,
-              height: 320,
-              border: "1.5px solid rgba(23, 255, 145, 0.85)",
-              boxShadow: "0 0 50px 8px rgba(23, 255, 145, 0.5), inset 0 0 30px 4px rgba(23, 255, 145, 0.25)",
-            }}
-          />
-
-          {/* 2-Tarqaluvchi to'lqin: Elektr zangori to'lqin (Cyan secondary wave) */}
-          <motion.div
-            initial={{ scale: 0.15, opacity: 0 }}
-            animate={{
-              scale: [0.15, 3.2, 5.5],
-              opacity: [0, 0.6, 0],
-            }}
-            transition={{
-              delay: 0.6,
-              duration: 1.9,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="absolute rounded-full pointer-events-none"
-            style={{
-              width: 320,
-              height: 320,
-              border: "1px solid rgba(0, 229, 255, 0.7)",
-              boxShadow: "0 0 40px 6px rgba(0, 229, 255, 0.35)",
-            }}
-          />
-
-          {/* 3-Tarqaluvchi to'lqin: Oq-neon tashqi sonar nuri */}
-          <motion.div
-            initial={{ scale: 0.15, opacity: 0 }}
-            animate={{
-              scale: [0.15, 3.8, 6.2],
-              opacity: [0, 0.35, 0],
-            }}
-            transition={{
-              delay: 0.8,
-              duration: 2.0,
-              ease: [0.16, 1, 0.3, 1],
-            }}
-            className="absolute rounded-full pointer-events-none"
-            style={{
-              width: 320,
-              height: 320,
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              boxShadow: "0 0 30px 4px rgba(255, 255, 255, 0.15)",
+              width: 240,
+              height: 240,
+              border: isDark
+                ? "1.5px solid rgba(23, 255, 145, 0.6)"
+                : "1.5px solid rgba(15, 174, 102, 0.5)",
+              transform: "translateZ(0)",
             }}
           />
 
@@ -214,16 +186,22 @@ export function SplashScreen() {
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
+            transition={{ delay: 0.2, duration: 0.2 }}
             onClick={dismiss}
-            className="absolute top-5 right-5 z-30 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-white/70 hover:text-white text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer group shadow-md"
+            className={`absolute top-5 right-5 z-30 px-3.5 py-1.5 rounded-full text-xs font-medium backdrop-blur-md transition-all flex items-center gap-1.5 cursor-pointer group shadow-md ${
+              isDark
+                ? "bg-white/10 hover:bg-white/15 border border-white/15 text-white/75 hover:text-white"
+                : "bg-black/5 hover:bg-black/10 border border-black/10 text-slate-700 hover:text-black"
+            }`}
           >
             <span>O&apos;tkazib yuborish</span>
-            <ArrowRight className="h-3 w-3 text-[#17ff91] group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className={`h-3 w-3 group-hover:translate-x-0.5 transition-transform ${
+              isDark ? "text-[#17ff91]" : "text-[#0fae66]"
+            }`} />
           </motion.button>
 
           {/* ═════════════════════════════════════════════════════════════════
-              ASOSIY LOGO KONTAYNERI (OLDINGI ANIMATSIYA DARAJASIDA SAQLANGAN)
+              ASOSIY LOGO KONTAYNERI
           ═════════════════════════════════════════════════════════════════ */}
           <div className="relative z-10 flex items-center justify-center px-6">
             
@@ -245,18 +223,22 @@ export function SplashScreen() {
               {/* Full uncropped icon (516x344 ratio = 1.5:1) */}
               <div className="relative w-[105px] h-[70px] sm:w-[129px] sm:h-[86px] md:w-[150px] md:h-[100px] flex items-center justify-center">
                 <Image
-                  src="/images/icon-dark.png"
+                  src={isDark ? "/images/icon-dark.png" : "/images/icon-light.png"}
                   alt="TestingHub Logo Mark"
                   width={150}
                   height={100}
                   priority
-                  className="object-contain w-full h-full drop-shadow-[0_0_30px_rgba(23,255,145,0.65)]"
+                  className={`object-contain w-full h-full ${
+                    isDark
+                      ? "drop-shadow-[0_0_30px_rgba(23,255,145,0.65)]"
+                      : "drop-shadow-[0_4px_20px_rgba(15,174,102,0.35)]"
+                  }`}
                 />
 
                 {/* Soft specular sheen sweep */}
                 <motion.div
                   initial={{ x: "-150%", opacity: 0 }}
-                  animate={isRevealed ? { x: "200%", opacity: [0, 0.7, 0] } : {}}
+                  animate={isRevealed ? { x: "200%", opacity: [0, isDark ? 0.7 : 0.4, 0] } : {}}
                   transition={{ delay: 0.8, duration: 0.85, ease: "easeInOut" }}
                   className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none"
                 />
@@ -281,10 +263,16 @@ export function SplashScreen() {
                 >
                   {/* Company Name: Testing + Hub */}
                   <div className="flex items-baseline gap-1.5 whitespace-nowrap">
-                    <span className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white drop-shadow-sm">
+                    <span className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${
+                      isDark ? "text-white drop-shadow-sm" : "text-[#1c275d] drop-shadow-xs"
+                    }`}>
                       Testing
                     </span>
-                    <span className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-[#17ff91] drop-shadow-[0_0_30px_rgba(23,255,145,0.75)]">
+                    <span className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${
+                      isDark
+                        ? "text-[#17ff91] drop-shadow-[0_0_30px_rgba(23,255,145,0.75)]"
+                        : "text-[#0fae66] drop-shadow-[0_0_25px_rgba(15,174,102,0.4)]"
+                    }`}>
                       Hub
                     </span>
                   </div>
@@ -294,7 +282,9 @@ export function SplashScreen() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.25, duration: 0.5, ease: "easeOut" }}
-                    className="text-xs sm:text-sm md:text-base font-semibold tracking-[0.22em] uppercase text-[#c0e1ff]/85 whitespace-nowrap mt-1 sm:mt-1.5"
+                    className={`text-xs sm:text-sm md:text-base font-semibold tracking-[0.22em] uppercase whitespace-nowrap mt-1 sm:mt-1.5 ${
+                      isDark ? "text-[#c0e1ff]/85" : "text-[#616e8a]"
+                    }`}
                   >
                     Global Testing Community
                   </motion.p>
@@ -308,3 +298,4 @@ export function SplashScreen() {
     </AnimatePresence>
   );
 }
+

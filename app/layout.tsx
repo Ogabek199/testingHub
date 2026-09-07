@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -7,6 +6,7 @@ import { I18nProvider } from "@/lib/i18n";
 import { CurrencyProvider } from "@/lib/currency";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/lib/toast";
+import { ThemeProvider } from "@/lib/theme";
 import {
   OrganizationJsonLd,
   WebSiteJsonLd,
@@ -14,11 +14,13 @@ import {
   ProfessionalServiceJsonLd,
 } from "@/components/seo/JsonLd";
 import { SplashScreen } from "@/components/ui/SplashScreen";
-
-const SITE_URL = "https://testinghub.uz";
-const SITE_NAME = "QA.TestingHub";
-const SITE_DESCRIPTION =
-  "Professional QA va dasturiy ta'minot sinov xizmati. Dasturiy ta'minotingizdagi kritik xatolarni foydalanuvchilarga yetib bormasdan toping. O'zbekistonning #1 QA testing platformasi.";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+} from "@/lib/constants";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -35,51 +37,12 @@ export const metadata: Metadata = {
 
   // ===== ASOSIY META =====
   title: {
-    default: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
-    template: "%s | QA.TestingHub",
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   applicationName: "TestingHub",
-  keywords: [
-    "qa testing",
-    "software testing",
-    "test automation",
-    "qa academy",
-    "uzbekistan testing",
-    "istqb",
-    "istqb uzbekistan",
-    "dasturiy ta'minot sinovi",
-    "QA xizmati",
-    "bug topish",
-    "test avtomatizatsiya",
-    "playwright test",
-    "cypress test",
-    "selenium testing",
-    "manual testing",
-    "api testing",
-    "security testing",
-    "penetration testing uzbekistan",
-    "performance testing",
-    "load testing",
-    "mobile app testing",
-    "ios app testing",
-    "android app testing",
-    "O'zbekiston QA",
-    "Toshkent QA xizmati",
-    "dasturchi xizmati",
-    "sayt test qilish",
-    "ilova test qilish",
-    "regression testing",
-    "smoke testing",
-    "qa tester",
-    "qa muhandis",
-    "testinghub",
-    "testinghub uz",
-    "testing hub uzbekistan",
-    "тестирование по узбекистан",
-    "qa услуги ташкент",
-    "автоматизация тестирования",
-  ],
+  keywords: SITE_KEYWORDS,
   authors: [{ name: "TestingHub QA Team", url: SITE_URL }],
   creator: "TestingHub",
   publisher: "QA.TestingHub",
@@ -88,10 +51,11 @@ export const metadata: Metadata = {
   // ===== IKONKALAR =====
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
     apple: [
-      { url: "/favicon.svg" },
+      { url: "/images/icon-192.png" },
     ],
   },
 
@@ -105,21 +69,21 @@ export const metadata: Metadata = {
     alternateLocale: ["ru_RU", "en_US"],
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: "/opengraph-image",
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
-        alt: "QA.TestingHub — Professional QA Testing Platform",
+        alt: SITE_TITLE,
         type: "image/png",
       },
       {
-        url: "/og-image.png",
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "QA.TestingHub — Professional QA Testing Platform",
+        alt: SITE_TITLE,
         type: "image/png",
       },
     ],
@@ -128,9 +92,9 @@ export const metadata: Metadata = {
   // ===== TWITTER CARD =====
   twitter: {
     card: "summary_large_image",
-    title: "QA.TestingHub — Professional QA Testing Platform | O'zbekiston",
+    title: SITE_TITLE,
     description: SITE_DESCRIPTION,
-    images: ["/opengraph-image", "/og-image.png"],
+    images: [`${SITE_URL}/opengraph-image`, `${SITE_URL}/og-image.png`],
     creator: "@testinghub",
     site: "@testinghub",
   },
@@ -197,6 +161,13 @@ export default function RootLayout({
         {/* DNS prefetch for Telegram (CTA links) */}
         <link rel="dns-prefetch" href="https://t.me" />
 
+        {/* Synchronous theme and splash pre-init — executes before render/paint to eliminate FOUC */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");var sysDark=window.matchMedia("(prefers-color-scheme: dark)").matches;var isDark=t==="dark"||((!t||t==="system")&&sysDark);if(isDark){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}if(!sessionStorage.getItem("testinghub_tab_seen")){document.documentElement.classList.add("splash-active");}}catch(e){}})();`,
+          }}
+        />
+
         {/* Global Structured Data (JSON-LD) for SEO */}
         <OrganizationJsonLd />
         <WebSiteJsonLd />
@@ -204,28 +175,22 @@ export default function RootLayout({
         <ProfessionalServiceJsonLd />
       </head>
       <body suppressHydrationWarning className="font-sans min-h-screen bg-background text-foreground antialiased selection:bg-primary/25 selection:text-foreground">
-        {/* Dark mode and splash pre-init — must run before paint */}
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem("testinghub_theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark");}else{document.documentElement.classList.remove("dark");}if(!sessionStorage.getItem("testinghub_tab_seen")){document.documentElement.classList.add("splash-active");}}catch(e){}})();`,
-          }}
-        />
-        <I18nProvider>
-          <CurrencyProvider>
-            <AuthProvider>
-              <ToastProvider>
-                <SplashScreen />
-                <div className="relative flex min-h-screen flex-col">
-                  <Header />
-                  <main className="flex-1">{children}</main>
-                  <Footer />
-                </div>
-              </ToastProvider>
-            </AuthProvider>
-          </CurrencyProvider>
-        </I18nProvider>
+        <ThemeProvider>
+          <I18nProvider>
+            <CurrencyProvider>
+              <AuthProvider>
+                <ToastProvider>
+                  <SplashScreen />
+                  <div className="relative flex min-h-screen flex-col">
+                    <Header />
+                    <main className="flex-1">{children}</main>
+                    <Footer />
+                  </div>
+                </ToastProvider>
+              </AuthProvider>
+            </CurrencyProvider>
+          </I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

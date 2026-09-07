@@ -65,7 +65,7 @@ export default async function Image() {
               QA.<span style={{ color: "#FF6B47" }}>TestingHub</span>
             </span>
             <span style={{ fontSize: "14px", color: "#A1A1AA", fontWeight: 500 }}>
-              testinghub.uz • O&apos;zbekiston
+              www.testinghub.uz • O&apos;zbekiston
             </span>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default async function Image() {
           </div>
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}>
             <span style={{ fontSize: "18px", color: "#FFFFFF", fontWeight: 700 }}>
-              https://testinghub.uz
+              https://www.testinghub.uz
             </span>
           </div>
         </div>

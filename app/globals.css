@@ -77,9 +77,12 @@
 }
 
 @layer components {
-  /* iOS-style Glass Surfaces */
+  /* iOS-style Glass Surfaces (GPU optimized for smooth 60fps scrolling) */
   .ios-glass {
-    @apply bg-white/80 dark:bg-[#15192e]/85 backdrop-blur-xl border border-black/[0.06] dark:border-white/[0.08];
+    @apply bg-white/80 dark:bg-[#15192e]/85 backdrop-blur-md border border-black/[0.06] dark:border-white/[0.08];
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .ios-card {
@@ -138,4 +141,13 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-black/25 dark:bg-white/30;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

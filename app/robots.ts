@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/constants";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://testinghub.uz";
+  const baseUrl = SITE_URL;
 
   return {
     rules: [
@@ -29,6 +30,17 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: "Yandex",
+        allow: "/",
+        disallow: [
+          "/dashboard",
+          "/dashboard/*",
+          "/login",
+          "/register",
+          "/api/*",
+        ],
+      },
+      {
+        userAgent: "Bingbot",
         allow: "/",
         disallow: [
           "/dashboard",
