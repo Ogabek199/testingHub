@@ -14,6 +14,7 @@ import {
   ProfessionalServiceJsonLd,
 } from "@/components/seo/JsonLd";
 import { SplashScreen } from "@/components/ui/SplashScreen";
+import { DeviceTracker } from "@/components/analytics/DeviceTracker";
 import {
   SITE_URL,
   SITE_NAME,
@@ -187,6 +188,7 @@ export default function RootLayout({
             <CurrencyProvider>
               <AuthProvider>
                 <ToastProvider>
+                  <DeviceTracker />
                   <SplashScreen />
                   <div id="app-content" className="relative flex min-h-screen flex-col">
                     <Header />

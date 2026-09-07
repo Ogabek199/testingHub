@@ -1,0 +1,41 @@
+{
+  "devices": {
+    "dev_1788772354712_i0whuo9": {
+      "id": "dev_1788772354712_i0whuo9",
+      "deviceType": "mobile",
+      "os": "iOS",
+      "browser": "Safari",
+      "screenResolution": "390x844",
+      "language": "uz",
+      "ip": "178.218.***.***",
+      "firstSeen": "2026-09-07T09:12:34.712Z",
+      "lastSeen": "2026-09-07T09:12:34.714Z",
+      "visitCount": 2
+    },
+    "dev_1788772354713_fddltn4": {
+      "id": "dev_1788772354713_fddltn4",
+      "deviceType": "desktop",
+      "os": "Windows",
+      "browser": "Chrome",
+      "screenResolution": "1920x1080",
+      "language": "ru",
+      "ip": "84.54.***.***",
+      "firstSeen": "2026-09-07T09:12:34.713Z",
+      "lastSeen": "2026-09-07T09:12:34.713Z",
+      "visitCount": 1
+    },
+    "dev_1788772354714_042g4r2": {
+      "id": "dev_1788772354714_042g4r2",
+      "deviceType": "tablet",
+      "os": "iOS",
+      "browser": "Safari",
+      "screenResolution": "810x1080",
+      "language": "en",
+      "ip": "94.158.***.***",
+      "firstSeen": "2026-09-07T09:12:34.714Z",
+      "lastSeen": "2026-09-07T09:12:34.714Z",
+      "visitCount": 1
+    }
+  },
+  "createdAt": "2026-09-07T09:12:34.710Z"
+}
