@@ -476,7 +476,7 @@ async function processUpdate(update) {
   }
 
   // 2. Text message
-  const msg = update.message;
+  const msg = update.message || update.channel_post;
   if (!msg || !msg.text) return;
 
   const chatId = msg.chat.id;
@@ -488,9 +488,11 @@ async function processUpdate(update) {
   // Monthly stats
   if (
     lower.startsWith("/monthly") ||
+    lower.startsWith("/oylik") ||
     lower.startsWith("/month") ||
     lower === "oylik" ||
-    lower === "oylik hisobot"
+    lower === "oylik hisobot" ||
+    lower === "monthly"
   ) {
     const monthly = getMonthlyStats();
     const replyText = formatMonthlyMessage(monthly);
@@ -508,9 +510,13 @@ async function processUpdate(update) {
   // Live stats
   if (
     lower.startsWith("/statistics") ||
+    lower.startsWith("/statistika") ||
     lower.startsWith("/stats") ||
+    lower.startsWith("/stat") ||
     lower === "statistics" ||
-    lower === "statistika"
+    lower === "statistika" ||
+    lower === "stats" ||
+    lower === "stat"
   ) {
     const stats = getLiveStats();
     const replyText = formatLiveMessage(stats);
@@ -566,7 +572,7 @@ async function startPolling() {
   // Initial webhook cleanup
   try {
     await fetch(`${TELEGRAM_API}/deleteWebhook?drop_pending_updates=true`);
-  } catch {}
+  } catch { }
 
   // Check monthly report on start
   await checkAndSendMonthlyReport();
@@ -593,5 +599,22 @@ async function startPolling() {
     }
   }
 }
+
+async function restoreWebhookAndExit() {
+  console.log("\n🛑 Bot to'xtatildi. Vercel Webhook qayta yoqilmoqda...");
+  try {
+    const res = await fetch(`${TELEGRAM_API}/setWebhook?url=https://www.testinghub.uz/api/telegram/webhook`);
+    const data = await res.json();
+    if (data.ok) {
+      console.log("✅ Webhook https://www.testinghub.uz/api/telegram/webhook manziliga muvaffaqiyatli qayta ulandi.");
+    }
+  } catch (err) {
+    console.error("Webhookni tiklashda xatolik:", err.message);
+  }
+  process.exit(0);
+}
+
+process.on("SIGINT", restoreWebhookAndExit);
+process.on("SIGTERM", restoreWebhookAndExit);
 
 startPolling();

@@ -4,6 +4,12 @@ export const SITE_NAME = "QA.TestingHub";
 
 export const SITE_TITLE = "QA.TestingHub — Professional QA Testing & Dasturiy Ta'minot Sinov Xizmati | O'zbekiston";
 
+export const CONTACT_PHONE = "+998949520528";
+export const CONTACT_PHONE_DISPLAY = "+998 (94) 952-05-28";
+export const CONTACT_TELEGRAM = "https://t.me/hiroako";
+export const CONTACT_LINKEDIN = "https://www.linkedin.com/company/testinghub-uz/posts/?feedView=all";
+export const CONTACT_INSTAGRAM = "https://www.instagram.com/testinghub.uz?stkn=d2x2azY5azdtbjRu";
+
 export const SITE_DESCRIPTION =
   "O'zbekistonda professional QA va dasturiy ta'minot testlash xizmatlari. Veb-sayt, mobil ilova (iOS, Android), API va xavfsizlik testlari. ISTQB xalqaro standartlari, test avtomatlashtirish (Playwright, Cypress). Bepul QA audit oling!";
 

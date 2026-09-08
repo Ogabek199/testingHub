@@ -266,7 +266,8 @@
     "title": "Loyihangiz sifatiga bugunoq ishonch hosil qiling",
     "subtitle": "Kalkulyatorda hisoblang yoki bepul konsultatsiya uchun mutaxassisimizga murojaat qiling.",
     "btnCalc": "Kalkulyatorni ochish",
-    "btnTelegram": "Telegram orqali yozish"
+    "btnTelegram": "Telegram orqali yozish",
+    "directCall": "Yoki to'g'ridan-to'g'ri bog'laning:"
   },
   "auth": {
     "loginTitle": "TestingHub platformasiga kirish",
@@ -416,6 +417,13 @@
     "tagline": "Dasturiy ta'minotingiz uchun professional va ishonchli QA xizmati.",
     "servicesTitle": "Xizmatlar",
     "companyTitle": "Kompaniya",
+    "contactsTitle": "Aloqa",
+    "phone": "Telefon raqam",
+    "socialsTitle": "Ijtimoiy tarmoqlar",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "callUs": "Qo'ng'iroq qilish",
     "legalTitle": "Huquqiy",
     "privacyLink": "Maxfiylik siyosati",
     "standardsNote": "ISTQB va ISO/IEC 25010 sifat standartlariga muvofiq",

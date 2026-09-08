@@ -59,8 +59,10 @@ interface StorageSchema {
   createdAt: string;
 }
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const isVercel = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const DATA_DIR = isVercel ? "/tmp" : path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "visitor_devices.json");
+const BUNDLED_DATA_FILE = path.join(process.cwd(), "data", "visitor_devices.json");
 
 let memoryCache: StorageSchema | null = null;
 let lastFileMtime: number = 0;
@@ -102,6 +104,16 @@ export function formatUzbekMonthName(yearMonth: string): string {
 async function loadStorage(): Promise<StorageSchema> {
   try {
     await fs.mkdir(DATA_DIR, { recursive: true });
+
+    // In serverless (Vercel), seed /tmp/visitor_devices.json from bundled build data if present
+    if (isVercel && !fsSync.existsSync(DATA_FILE) && fsSync.existsSync(BUNDLED_DATA_FILE)) {
+      try {
+        const bundledContent = await fs.readFile(BUNDLED_DATA_FILE, "utf-8");
+        await fs.writeFile(DATA_FILE, bundledContent, "utf-8");
+      } catch (seedErr) {
+        console.warn("[DeviceStorage] Failed to seed /tmp from bundled data:", seedErr);
+      }
+    }
 
     if (fsSync.existsSync(DATA_FILE)) {
       const stats = await fs.stat(DATA_FILE);
@@ -242,11 +254,10 @@ export async function recordDeviceVisit(input: {
   const currentMonth = getTashkentYearMonth(now);
 
   let deviceId = input.deviceId?.trim();
-  const isNew = !deviceId || !storage.devices[deviceId];
-
-  if (!deviceId || isNew) {
+  if (!deviceId || !deviceId.startsWith("dev_")) {
     deviceId = `dev_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
+  const isNew = !storage.devices[deviceId];
 
   const { deviceType, os, browser } = parseUserAgent(input.userAgent || "");
 

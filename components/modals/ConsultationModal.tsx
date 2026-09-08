@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useConsultationModal } from "@/lib/consultation-context";
 import { useTranslation } from "@/lib/i18n";
 import { useToast } from "@/lib/toast";
+import { CONTACT_TELEGRAM } from "@/lib/constants";
 import {
   X,
   Send,
@@ -681,7 +682,7 @@ export function ConsultationModal() {
               </button>
 
               <a
-                href="https://t.me/hiroako"
+                href={CONTACT_TELEGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-2.5 rounded-xl bg-primary text-white text-sm font-bold shadow-coral-glow hover:bg-primary/90 transition-all flex items-center gap-1.5 cursor-pointer"

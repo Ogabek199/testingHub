@@ -4,8 +4,14 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
-import { ShieldCheck, Heart } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import {
+  CONTACT_PHONE,
+  CONTACT_TELEGRAM,
+  CONTACT_LINKEDIN,
+  CONTACT_INSTAGRAM,
+} from "@/lib/constants";
 
 export function Footer() {
   const pathname = usePathname();
@@ -18,9 +24,9 @@ export function Footer() {
   return (
     <footer className="border-t border-black/[0.06] dark:border-white/[0.08] bg-cream-100/40 dark:bg-[#11162a] py-12 transition-colors">
       <div className="container-max section-padding">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-black/[0.06] dark:border-white/[0.06]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pb-10 border-b border-black/[0.06] dark:border-white/[0.06]">
           {/* Logo & Tagline */}
-          <div className="md:col-span-2 space-y-3">
+          <div className="space-y-3">
             <Link href="/" className="inline-block transition-opacity hover:opacity-90">
               <Logo height={32} />
             </Link>
@@ -62,6 +68,53 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Aloqa / Contacts */}
+          <div>
+            <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">
+              {t("footer.contactsTitle")}
+            </h4>
+            <ul className="space-y-2 text-xs text-muted-foreground">
+              <li>
+                <a
+                  href={`tel:${CONTACT_PHONE}`}
+                  className="hover:text-primary transition-colors"
+                >
+                  {t("footer.phone")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={CONTACT_TELEGRAM}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  {t("footer.telegram")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={CONTACT_INSTAGRAM}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  {t("footer.instagram")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={CONTACT_LINKEDIN}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  {t("footer.linkedin")}
+                </a>
+              </li>
+            </ul>
+          </div>
+
           {/* Legal & Info */}
           <div>
             <h4 className="text-xs font-bold text-foreground uppercase tracking-wider mb-3">
@@ -73,13 +126,7 @@ export function Footer() {
                   {t("footer.privacyLink")}
                 </Link>
               </li>
-              <li>
-                <a href="https://t.me/hiroako" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-                  Telegram
-                </a>
-              </li>
             </ul>
-
           </div>
         </div>
 

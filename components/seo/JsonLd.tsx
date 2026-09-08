@@ -1,5 +1,12 @@
-import React from "react";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  CONTACT_PHONE,
+  CONTACT_TELEGRAM,
+  CONTACT_LINKEDIN,
+  CONTACT_INSTAGRAM,
+} from "@/lib/constants";
 
 interface JsonLdProps {
   data: Record<string, unknown>;
@@ -34,11 +41,14 @@ export function OrganizationJsonLd() {
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "customer service",
-      url: "https://t.me/hiroako",
+      telephone: CONTACT_PHONE,
+      url: CONTACT_TELEGRAM,
       availableLanguage: ["uz", "ru", "en"],
     },
     sameAs: [
-      "https://t.me/hiroako",
+      CONTACT_TELEGRAM,
+      CONTACT_LINKEDIN,
+      CONTACT_INSTAGRAM,
       "https://github.com/Ogabek199/testingHub",
     ],
     areaServed: {
@@ -107,7 +117,7 @@ export function ProfessionalServiceJsonLd() {
     name: SITE_NAME,
     image: `${SITE_URL}/og-image.png`,
     url: SITE_URL,
-    telephone: "+998",
+    telephone: CONTACT_PHONE,
     priceRange: "$$",
     currenciesAccepted: "UZS, USD",
     paymentAccepted: "Cash, Credit Card, Bank Transfer, Payme, Click",

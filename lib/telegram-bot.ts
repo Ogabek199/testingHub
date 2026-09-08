@@ -182,7 +182,7 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
   }
 
   // 2. Handle Text Messages
-  const message = update.message;
+  const message = update.message || update.channel_post;
   if (!message || !message.text) return false;
 
   const chatId = message.chat.id;
@@ -192,9 +192,11 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
   // Command: /monthly, /oylik, /month
   if (
     lower.startsWith("/monthly") ||
+    lower.startsWith("/oylik") ||
     lower.startsWith("/month") ||
     lower === "oylik" ||
-    lower === "oylik hisobot"
+    lower === "oylik hisobot" ||
+    lower === "monthly"
   ) {
     const monthlyStats = await getMonthlyStats();
     const responseText = formatMonthlyTelegramStatsMessage(monthlyStats);
@@ -213,12 +215,16 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
     return true;
   }
 
-  // Command: /statistics, /stats, statistics, statistika
+  // Command: /statistics, /statistika, /stats, /stat, statistics, statistika
   if (
     lower.startsWith("/statistics") ||
+    lower.startsWith("/statistika") ||
     lower.startsWith("/stats") ||
+    lower.startsWith("/stat") ||
     lower === "statistics" ||
-    lower === "statistika"
+    lower === "statistika" ||
+    lower === "stats" ||
+    lower === "stat"
   ) {
     const stats = await getDeviceStats();
     const responseText = formatTelegramStatsMessage(stats);

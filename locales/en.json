@@ -266,7 +266,8 @@
     "title": "Ensure Your Software Reliability Today",
     "subtitle": "Calculate your testing scope or talk to our lead QA engineer for a free consultation.",
     "btnCalc": "Open Calculator",
-    "btnTelegram": "Message on Telegram"
+    "btnTelegram": "Message on Telegram",
+    "directCall": "Or contact us directly:"
   },
   "auth": {
     "loginTitle": "Sign in to TestingHub",
@@ -416,6 +417,13 @@
     "tagline": "Professional and trustworthy QA services for software products.",
     "servicesTitle": "Services",
     "companyTitle": "Company",
+    "contactsTitle": "Contact",
+    "phone": "Phone number",
+    "socialsTitle": "Social Media",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "callUs": "Call us",
     "legalTitle": "Legal",
     "privacyLink": "Privacy Policy",
     "standardsNote": "Compliant with ISTQB & ISO/IEC 25010 testing quality frameworks",

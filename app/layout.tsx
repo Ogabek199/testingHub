@@ -15,6 +15,7 @@ import {
 } from "@/components/seo/JsonLd";
 import { SplashScreen } from "@/components/ui/SplashScreen";
 import { DeviceTracker } from "@/components/analytics/DeviceTracker";
+import { Analytics } from "@vercel/analytics/react";
 import {
   SITE_URL,
   SITE_NAME,
@@ -198,6 +199,7 @@ export default function RootLayout({
                 <ToastProvider>
                   <ConsultationModalProvider>
                     <DeviceTracker />
+                    <Analytics />
                     <SplashScreen />
                     <ConsultationModal />
                     <div id="app-content" className="relative flex min-h-screen flex-col">

@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import { ArrowRight, Send, Sparkles } from "lucide-react";
+import { CONTACT_TELEGRAM } from "@/lib/constants";
 
 export function CTA() {
   const { t } = useTranslation();
@@ -50,7 +51,7 @@ export function CTA() {
               </Link>
 
               <a
-                href="https://t.me/hiroako"
+                href={CONTACT_TELEGRAM}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white/15 hover:bg-white/25 text-white font-semibold text-sm border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 transition-all"
@@ -58,7 +59,6 @@ export function CTA() {
                 <Send className="h-4 w-4" />
                 <span>{t("cta.btnTelegram")}</span>
               </a>
-
             </div>
           </div>
         </div>

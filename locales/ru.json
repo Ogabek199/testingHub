@@ -266,7 +266,8 @@
     "title": "Обеспечьте надежность вашего продукта уже сегодня",
     "subtitle": "Рассчитайте стоимость на калькуляторе или обратитесь к эксперту за консультацией.",
     "btnCalc": "Открыть калькулятор",
-    "btnTelegram": "Написать в Telegram"
+    "btnTelegram": "Написать в Telegram",
+    "directCall": "Или позвоните нам напрямую:"
   },
   "auth": {
     "loginTitle": "Вход в платформу TestingHub",
@@ -416,6 +417,13 @@
     "tagline": "Профессиональные и надежные услуги QA для вашего программного обеспечения.",
     "servicesTitle": "Услуги",
     "companyTitle": "Компания",
+    "contactsTitle": "Контакты",
+    "phone": "Номер телефона",
+    "socialsTitle": "Социальные сети",
+    "telegram": "Telegram",
+    "instagram": "Instagram",
+    "linkedin": "LinkedIn",
+    "callUs": "Позвонить",
     "legalTitle": "Юридическая информация",
     "privacyLink": "Политика конфиденциальности",
     "standardsNote": "В соответствии со стандартами качества ISTQB и ISO/IEC 25010",
