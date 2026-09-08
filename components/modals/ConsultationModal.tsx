@@ -42,7 +42,6 @@ interface ServiceItem {
 const SERVICES_LIST: ServiceItem[] = [
   { id: "web", labelKey: "consultationModal.serviceWeb" },
   { id: "mobile", labelKey: "consultationModal.serviceMobile" },
-  { id: "security", labelKey: "consultationModal.serviceSecurity" },
   { id: "automation", labelKey: "consultationModal.serviceAutomation" },
   { id: "performance", labelKey: "consultationModal.servicePerformance" },
   { id: "general", labelKey: "consultationModal.serviceGeneral" },
