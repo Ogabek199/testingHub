@@ -183,13 +183,20 @@ export function ServicesComparison() {
     toastSuccess(`${t("toasts.leadSuccessDesc")} ID: ${leadId}`, t("toasts.leadSuccessTitle"));
   };
 
-  const features = [
+  const modelAFeatures: string[] = [
     "services.feature1",
     "services.feature2",
     "services.feature3",
     "services.feature4",
     "services.feature5",
-    "services.feature6",
+  ];
+
+  const modelBFeatures: string[] = [
+    "services.feature1",
+    "services.feature2",
+    "services.feature3",
+    "services.feature4",
+    "services.featureStress",
     "services.feature7",
   ];
 
@@ -237,7 +244,7 @@ export function ServicesComparison() {
               </div>
 
               <ul className="space-y-3 text-xs text-muted-foreground mb-8">
-                {features.slice(0, 5).map((fKey, i) => (
+                {modelAFeatures.map((fKey, i) => (
                   <li key={i} className="flex items-center gap-2.5">
                     <Check className="h-4 w-4 text-emerald-500 shrink-0" />
                     <span>{t(fKey)}</span>
@@ -276,7 +283,7 @@ export function ServicesComparison() {
               </div>
 
               <ul className="space-y-3 text-xs text-foreground/90 font-medium mb-8">
-                {features.map((fKey, i) => (
+                {modelBFeatures.map((fKey, i) => (
                   <li key={i} className="flex items-center gap-2.5">
                     <Check className="h-4 w-4 text-primary shrink-0" />
                     <span>{t(fKey)}</span>

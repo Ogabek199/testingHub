@@ -210,6 +210,7 @@
     "feature4": "API & integration verification",
     "feature5": "Basic security & vulnerability check",
     "feature6": "CI/CD setup & test automation",
+    "featureStress": "Load & stress testing (Stress Testing)",
     "feature7": "Dedicated QA engineer & weekly status reviews",
     "continuousGuarantee": "Continuous quality assurance",
     "btnSelect": "Select Plan",
