@@ -21,6 +21,39 @@ export function getDefaultChatId(): string | undefined {
 }
 
 /**
+ * Whitelisted Telegram User IDs permitted to use the bot
+ */
+export const DEFAULT_ALLOWED_USER_IDS: string[] = [
+  "1329024520",
+  "5764200653",
+];
+
+export function getAllowedUserIds(): string[] {
+  const envAllowed = process.env.TELEGRAM_ALLOWED_USERS;
+  if (envAllowed) {
+    const ids = envAllowed
+      .split(",")
+      .map((id) => id.trim())
+      .filter(Boolean);
+    return Array.from(new Set([...DEFAULT_ALLOWED_USER_IDS, ...ids]));
+  }
+  return DEFAULT_ALLOWED_USER_IDS;
+}
+
+export function isUserAllowed(userId?: string | number | null): boolean {
+  if (!userId) return false;
+  const strId = String(userId).trim();
+  return getAllowedUserIds().includes(strId);
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
  * Send a message via Telegram Bot API
  */
 export async function sendTelegramMessage(
@@ -83,7 +116,8 @@ export async function editTelegramMessage(
  */
 export async function answerCallbackQuery(
   callbackQueryId: string,
-  text?: string
+  text?: string,
+  showAlert: boolean = false
 ) {
   const token = getBotToken();
   const url = `${TELEGRAM_API_BASE}${token}/answerCallbackQuery`;
@@ -94,6 +128,7 @@ export async function answerCallbackQuery(
     body: JSON.stringify({
       callback_query_id: callbackQueryId,
       text: text || "",
+      show_alert: showAlert,
     }),
   });
 }
@@ -141,8 +176,19 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
     const data = cb.data;
     const chatId = cb.message?.chat?.id;
     const messageId = cb.message?.message_id;
+    const fromId = cb.from?.id;
 
     if (!chatId || !messageId) return false;
+
+    // Security check: Whitelist verification for button clicks
+    if (!isUserAllowed(fromId)) {
+      await answerCallbackQuery(
+        cb.id,
+        "⛔️ Ruxsat berilmagan! Ushbu bot faqat tasdiqlangan ma'murlar uchun.",
+        true
+      );
+      return true;
+    }
 
     if (data === "refresh_stats") {
       await answerCallbackQuery(cb.id, "Statistika yangilanmoqda...");
@@ -186,8 +232,38 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
   if (!message || !message.text) return false;
 
   const chatId = message.chat.id;
+  const fromId = message.from?.id;
   const rawText = message.text.trim();
   const lower = rawText.toLowerCase();
+
+  // Command: /id or /myid (Public command so anyone can see their ID to request access)
+  if (lower === "/id" || lower === "/myid") {
+    await sendTelegramMessage(
+      chatId,
+      `🆔 <b>Sizning Telegram ID raqamingiz:</b> <code>${fromId || chatId}</code>\n\n` +
+      `<i>Ushbu ID raqamni TestingHub ma'muriga taqdim etib botga ruxsat olishingiz mumkin.</i>`,
+      { parse_mode: "HTML" }
+    );
+    return true;
+  }
+
+  // Security check: Whitelist verification for text commands
+  if (!isUserAllowed(fromId)) {
+    const userName =
+      [message.from?.first_name, message.from?.last_name].filter(Boolean).join(" ") ||
+      message.from?.username ||
+      "Foydalanuvchi";
+
+    await sendTelegramMessage(
+      chatId,
+      `⛔️ <b>Kirish taqiqlangan!</b>\n\n` +
+      `Hurmatli <b>${escapeHtml(userName)}</b>, sizda <b>TestingHub</b> botidan foydalanish huquqi yo'q.\n\n` +
+      `🆔 <b>Sizning Telegram ID:</b> <code>${fromId || "noma'lum"}</code>\n\n` +
+      `🔒 <i>Xavfsizlik maqsadida ushbu bot faqat ruxsat berilgan ma'murlar uchun ishlaydi. Botdan foydalanish uchun ID raqamingizni administratorga taqdim eting.</i>`,
+      { parse_mode: "HTML" }
+    );
+    return true;
+  }
 
   // Command: /monthly, /oylik, /month
   if (
@@ -247,12 +323,14 @@ export async function handleTelegramUpdate(update: any): Promise<boolean> {
   if (lower.startsWith("/start") || lower.startsWith("/help")) {
     const helpText = `👋 <b>Assalomu alaykum!</b>
 
-Men <b>testingHub</b> loyihasining rasmiy monitoring botiman.
+Men <b>TestingHub</b> loyihasining rasmiy monitoring botiman.
+Siz tasdiqlangan ma'mursiz (✅ Ruxsat faol).
 
 📌 <b>Mavjud buyruqlar:</b>
 • /statistics — Saytga tashrif buyurgan barcha qurilmalar va jami tashriflar hisoboti
 • /monthly — O'tgan oy yakunlari va to'liq oylik analitika hisoboti
 • /stats — Qisqartirilgan buyruq
+• /id — O'z Telegram ID raqamingizni ko'rish
 • /help — Yordam ma'lumoti
 
 🔔 <i>Bot har oy boshida avtomatik tarzda oylik hisobotni guruhga yetkazib beradi.</i>

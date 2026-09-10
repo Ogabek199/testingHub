@@ -9,6 +9,20 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/dashboard/:path*",
+        destination: "/",
+        permanent: false,
+      },
+      {
+        source: "/dashboard",
+        destination: "/",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -35,16 +49,6 @@ const nextConfig = {
           {
             key: "Expires",
             value: "0",
-          },
-        ],
-      },
-      {
-        // Cache immutable hashed static assets forever
-        source: "/_next/static/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
           },
         ],
       },

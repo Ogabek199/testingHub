@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
     if (res.success) {
       toastSuccess(t("toasts.registerSuccessDesc"), t("toasts.registerSuccessTitle"));
-      router.push("/dashboard");
+      router.push("/");
     } else {
       const errMsg = res.error || t("toasts.registerErrorTitle");
       setError(errMsg);

@@ -1,23 +1,12 @@
-import type { Metadata } from "next";
-import { DashboardLayoutClient } from "@/components/dashboard/DashboardLayoutClient";
-
-export const metadata: Metadata = {
-  title: "QA Dashboard",
-  description: "TestingHub boshqaruv paneli va test monitoringi.",
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: {
-      index: false,
-      follow: false,
-    },
-  },
-};
+import { redirect } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
-  return <DashboardLayoutClient>{children}</DashboardLayoutClient>;
+  // Dashboard sahifasiga kirish taqiqlangan - Bosh sahifaga yo'naltiriladi
+  redirect("/");
+  return null;
 }
+

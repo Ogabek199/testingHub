@@ -32,7 +32,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push("/");
     }
   }, [isAuthenticated, router]);
 
@@ -46,7 +46,8 @@ function LoginForm() {
 
     if (res.success) {
       toastSuccess(t("toasts.loginSuccessDesc"), t("toasts.loginSuccessTitle"));
-      const redirect = searchParams.get("redirect") || "/dashboard";
+      const redirectTarget = searchParams.get("redirect");
+      const redirect = redirectTarget && !redirectTarget.startsWith("/dashboard") ? redirectTarget : "/";
       router.push(redirect);
     } else {
       const errMsg = res.error || t("toasts.loginErrorTitle");
