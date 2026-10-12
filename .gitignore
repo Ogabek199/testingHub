@@ -27,3 +27,17 @@ yarn-error.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local secrets, env templates, agent/setup docs — do not publish to GitHub
+.env
+.env.*
+.env.example
+AGENTS.md
+CLAUDE.md
+.cursor/
+.agent/
+setup.md
+SETUP.md
+SETUP-*.md
+security.md
+SECURITY.md
